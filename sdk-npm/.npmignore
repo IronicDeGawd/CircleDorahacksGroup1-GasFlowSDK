@@ -1,0 +1,37 @@
+# Source files
+src/
+tests/
+demo/
+sdk-frontend/
+
+# Development files
+.clauderules
+.eslintrc.js
+.prettierrc
+tsconfig.json
+jest.config.js
+jest.testnet.config.js
+
+# Documentation (not needed in package)
+reference.md
+TESTNET_SETUP.md
+.env.example
+
+# Development environment
+node_modules/
+.env
+.env.local
+.env.*
+
+# IDE and OS files
+.vscode/
+.idea/
+.DS_Store
+*.log
+
+# Git files
+.git/
+.gitignore
+
+# Build artifacts
+*.tsbuildinfo
