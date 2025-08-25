@@ -7,21 +7,25 @@ GasFlow is a revolutionary SDK that abstracts cross-chain gas payments, allowing
 ## ✨ Key Features
 
 ### 🌐 Universal Gas Balance
+
 - **Unified USDC View**: Display total USDC balance across all supported chains as available "gas credit"
 - **Real-time Balance Sync**: Live updates of USDC balances across all chains
 - **Cross-chain Gas Estimation**: Calculate gas costs and show if sufficient USDC exists across all chains
 
 ### 🎯 Intelligent Route Optimization
+
 - **Cost-Optimal Execution**: Automatically choose the most cost-effective chain for transaction execution
 - **Bridge Cost Analysis**: Factor in CCTP bridge costs when determining optimal execution path
 - **Gas Price Prediction**: Integrate real-time gas price feeds for accurate cost estimation
 
 ### ⚡ Just-in-Time Cross-Chain Transfers
+
 - **Minimal Bridge Amounts**: Only transfer exact USDC needed for gas fees
 - **Fast Transfer Integration**: Use CCTP V2 Fast Transfer for sub-30-second cross-chain gas payments
 - **Fallback Mechanisms**: Graceful degradation to Standard Transfer if Fast Transfer fails
 
 ### 🛠 Developer Experience
+
 - **One-Line Integration**: Single function call handles all complexity
 - **Framework Agnostic**: Works with any JavaScript framework
 - **TypeScript Support**: Full type safety and IntelliSense
@@ -47,13 +51,17 @@ const gasFlow = new GasFlowSDK({
 });
 
 // Execute transaction with automatic gas optimization
-const result = await gasFlow.execute({
-  to: '0x742C7f0f6b6d43A35556D5F7FAF7a93AC8c3b7B8',
-  value: parseEther('0.1'),
-  data: '0x',
-  payFromChain: 'auto',      // Automatically select cheapest chain
-  executeOn: 'optimal'       // Automatically select optimal execution chain
-}, userAddress, userPrivateKey);
+const result = await gasFlow.execute(
+  {
+    to: '0x1A00D9a88fC5ccF7a52E268307F98739f770A956',
+    value: parseEther('0.1'),
+    data: '0x',
+    payFromChain: 'auto', // Automatically select cheapest chain
+    executeOn: 'optimal', // Automatically select optimal execution chain
+  },
+  userAddress,
+  userPrivateKey
+);
 
 console.log(`✅ Transaction executed! Hash: ${result.transactionHash}`);
 console.log(`💰 Total cost: $${result.totalCostUSDC.toString()} USDC`);
@@ -68,8 +76,18 @@ import { ethers, Wallet } from 'ethers';
 
 // Set up signers for each chain
 const providers = new Map([
-  [11155111, new ethers.providers.JsonRpcProvider('https://sepolia.infura.io/v3/YOUR_KEY')],
-  [421614, new ethers.providers.JsonRpcProvider('https://sepolia-rollup.arbitrum.io/rpc')],
+  [
+    11155111,
+    new ethers.providers.JsonRpcProvider(
+      'https://sepolia.infura.io/v3/YOUR_KEY'
+    ),
+  ],
+  [
+    421614,
+    new ethers.providers.JsonRpcProvider(
+      'https://sepolia-rollup.arbitrum.io/rpc'
+    ),
+  ],
 ]);
 
 const signers = new Map([
@@ -79,19 +97,22 @@ const signers = new Map([
 
 // Initialize SDK with production CCTP
 const gasFlow = new GasFlowSDK({
-  apiKey: process.env.CIRCLE_API_KEY!,        // Circle API key
+  apiKey: process.env.CIRCLE_API_KEY!, // Circle API key
   supportedChains: [11155111, 421614],
-  useProductionCCTP: true,                    // Enable real CCTP contracts
-  signers: signers                            // Wallet signers
+  useProductionCCTP: true, // Enable real CCTP contracts
+  signers: signers, // Wallet signers
 });
 
 // Execute with real Circle bridge
-const result = await gasFlow.execute({
-  to: '0x742C7f0f6b6d43A35556D5F7FAF7a93AC8c3b7B8',
-  data: '0x',
-  executeOn: 421614,    // Arbitrum Sepolia
-  payFromChain: 11155111 // Ethereum Sepolia (uses real CCTP)
-}, await signers.get(11155111)!.getAddress());
+const result = await gasFlow.execute(
+  {
+    to: '0x1A00D9a88fC5ccF7a52E268307F98739f770A956',
+    data: '0x',
+    executeOn: 421614, // Arbitrum Sepolia
+    payFromChain: 11155111, // Ethereum Sepolia (uses real CCTP)
+  },
+  await signers.get(11155111)!.getAddress()
+);
 ```
 
 ### Utility Methods
@@ -102,11 +123,14 @@ const balance = await gasFlow.getUnifiedBalance(userAddress);
 console.log(`Total USDC available: $${balance.totalUSDValue}`);
 
 // Estimate transaction costs and routes
-const estimate = await gasFlow.estimateTransaction({
-  to: '0x...',
-  data: '0x...',
-  executeOn: 'optimal'
-}, userAddress);
+const estimate = await gasFlow.estimateTransaction(
+  {
+    to: '0x...',
+    data: '0x...',
+    executeOn: 'optimal',
+  },
+  userAddress
+);
 
 console.log(`Best route: ${estimate.recommendedExecution.reason}`);
 console.log(`Estimated cost: $${estimate.bestRoute.totalCost.toString()} USDC`);
@@ -115,6 +139,7 @@ console.log(`Estimated cost: $${estimate.bestRoute.totalCost.toString()} USDC`);
 ## 🌍 Supported Chains
 
 ### Testnet (Current)
+
 - ✅ **Ethereum Sepolia** (11155111)
 - ✅ **Arbitrum Sepolia** (421614) - Paymaster Available
 - ✅ **Base Sepolia** (84532) - Paymaster Available
@@ -122,6 +147,7 @@ console.log(`Estimated cost: $${estimate.bestRoute.totalCost.toString()} USDC`);
 - ✅ **Polygon Amoy** (80002)
 
 ### Mainnet (Ready)
+
 - ✅ **Ethereum** (1)
 - ✅ **Arbitrum One** (42161) - Paymaster Available
 - ✅ **Base** (8453) - Paymaster Available
@@ -156,6 +182,7 @@ npm start
 ```
 
 The demo showcases:
+
 - 💰 Real-time balance aggregation across 5 testnet chains
 - 🎯 Interactive route analysis and cost comparison
 - ⚡ Simulated transaction execution with progress tracking
@@ -164,23 +191,27 @@ The demo showcases:
 ## 📚 Documentation
 
 ### Detailed Explanations
+
 - [`explanation/cctp-integration.md`](./explanation/cctp-integration.md) - Circle CCTP V2 integration
 - [`explanation/paymaster-integration.md`](./explanation/paymaster-integration.md) - Circle Paymaster integration
 - [`explanation/demo-app.md`](./explanation/demo-app.md) - Demo application guide
 - [`explanation/feature-comparison.md`](./explanation/feature-comparison.md) - Specification compliance
 
 ### Technical References
+
 - [`reference.md`](./reference.md) - All research sources and API references
 - [`.clauderules`](./.clauderules) - Development guidelines and principles
 
 ## 🧪 Testing
 
 ### Quick Demo (No Setup Required)
+
 ```bash
 cd demo
 bun install
 bun run dev
 ```
+
 - **Access**: http://localhost:3000
 - **Features**: Complete SDK demonstration with realistic mock data
 - **Safe**: No real transactions, perfect for exploring functionality
@@ -190,15 +221,18 @@ bun run dev
 **📋 Complete Setup Guide**: See [`TESTNET_SETUP.md`](./TESTNET_SETUP.md) for detailed instructions.
 
 **Quick Start:**
+
 1. **Get Circle API Key**: https://developers.circle.com/
 2. **Get Testnet USDC**: https://faucet.circle.com/
 3. **Configure Environment**:
+
 ```bash
 cp .env.example .env
 # Add your Circle API key to .env
 ```
 
 4. **Test Real Transactions**:
+
 ```typescript
 const gasFlow = new GasFlowSDK({
   apiKey: process.env.CIRCLE_API_KEY,
@@ -211,14 +245,16 @@ const gasFlow = new GasFlowSDK({
 ### Environment Setup
 
 **SDK Configuration:**
+
 ```bash
 # Copy and configure main environment
 cp .env.example .env
 ```
 
 **Demo App Configuration:**
+
 ```bash
-# Copy and configure demo environment  
+# Copy and configure demo environment
 cd demo
 cp .env.example .env.local
 ```
@@ -238,26 +274,29 @@ GASFLOW_SUPPORTED_CHAINS=11155111,421614,84532,43113,80002
 const gasFlow = new GasFlowSDK({
   apiKey: 'your-api-key',
   supportedChains: [11155111, 421614, 84532],
-  preferredChains: [421614, 84532],        // Prefer L2s for lower costs
-  maxBridgeAmount: parseUnits('1000', 6),  // Max $1000 bridge per transaction
-  slippageTolerance: 0.01,                 // 1% slippage tolerance
-  gasLimitMultiplier: 1.2,                 // 20% gas limit buffer
+  preferredChains: [421614, 84532], // Prefer L2s for lower costs
+  maxBridgeAmount: parseUnits('1000', 6), // Max $1000 bridge per transaction
+  slippageTolerance: 0.01, // 1% slippage tolerance
+  gasLimitMultiplier: 1.2, // 20% gas limit buffer
   webhookUrl: 'https://api.yourapp.com/webhooks/gasflow',
-  analytics: true,                         // Enable usage analytics
+  analytics: true, // Enable usage analytics
 });
 ```
 
 ## 💰 Cost Structure
 
 ### Circle Paymaster Fees
+
 - **Testnet**: FREE until July 2025
 - **Mainnet**: 10% markup on gas fees after July 2025
 
 ### CCTP Bridge Fees
+
 - **Standard Transfer**: ~$0.10 USDC per bridge
 - **Fast Transfer**: ~$0.10 USDC per bridge (when available)
 
 ### Gas Optimization Savings
+
 - **Typical Savings**: 20-40% reduction in total transaction costs
 - **L2 Execution**: Up to 95% savings vs Ethereum mainnet
 - **Smart Routing**: Automatic selection of cheapest viable route
@@ -265,12 +304,14 @@ const gasFlow = new GasFlowSDK({
 ## 🚀 Roadmap
 
 ### Phase 2 (Q2 2025)
+
 - **Gas Subscriptions**: Monthly unlimited gas plans
 - **Group Gas Pools**: Shared gas balances for teams/DAOs
 - **AI Gas Optimization**: Machine learning for better route prediction
 - **Mobile SDK**: React Native support for mobile dApps
 
 ### Phase 3 (Q3 2025)
+
 - **Cross-Chain Intents**: Abstract away not just gas but entire execution
 - **Gasless Onboarding**: Sponsor new users' first transactions
 - **Enterprise Analytics**: Dashboard for businesses to track gas spending
@@ -311,4 +352,4 @@ This project was built for the Circle Developer Bounties hackathon, demonstratin
 
 **Built with ❤️ using Circle CCTP V2 and Paymaster**
 
-*Making cross-chain gas payments as simple as a single function call.*
+_Making cross-chain gas payments as simple as a single function call._

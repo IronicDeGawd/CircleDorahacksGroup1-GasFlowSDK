@@ -297,6 +297,67 @@ export class GasFlowSDK {
     };
   }
 
+  /**
+   * Set signer for a specific chain (useful for dynamic wallet connection)
+   */
+  setSigner(chainId: ChainId, signer: any): void {
+    this.validateSigner(signer);
+    this.validateChainId(chainId);
+    
+    if (this.cctpService && 'setSigner' in this.cctpService) {
+      (this.cctpService as any).setSigner(chainId, signer);
+      console.log(`✅ Signer configured for chain ${chainId}`);
+    } else {
+      console.warn(`⚠️ Current CCTP service does not support dynamic signer addition for chain ${chainId}`);
+    }
+  }
+
+  /**
+   * Set signer for all supported chains
+   */
+  setSignerForAllChains(signer: any): void {
+    this.validateSigner(signer);
+    
+    const supportedChains = this.config.supportedChains.length > 0 
+      ? this.config.supportedChains 
+      : DEFAULT_SUPPORTED_CHAINS;
+      
+    supportedChains.forEach(chainId => {
+      this.setSigner(chainId, signer);
+    });
+    
+    console.log(`✅ Signer configured for ${supportedChains.length} supported chains`);
+  }
+
+  /**
+   * Private helper to validate signer objects
+   */
+  private validateSigner(signer: any): void {
+    if (!signer) {
+      throw new Error('Signer cannot be null or undefined');
+    }
+    if (typeof signer.getAddress !== 'function') {
+      throw new Error('Invalid signer provided - must implement getAddress() method');
+    }
+  }
+
+  /**
+   * Private helper to validate chain IDs
+   */
+  private validateChainId(chainId: ChainId): void {
+    if (!chainId || typeof chainId !== 'number') {
+      throw new Error('Invalid chain ID provided');
+    }
+    
+    const supportedChains = this.config.supportedChains.length > 0 
+      ? this.config.supportedChains 
+      : DEFAULT_SUPPORTED_CHAINS;
+      
+    if (!supportedChains.includes(chainId)) {
+      console.warn(`⚠️ Chain ${chainId} is not in supported chains list: [${supportedChains.join(', ')}]`);
+    }
+  }
+
   destroy(): void {
     this.balanceManager.destroy();
     this.gasEstimator.clearCache();

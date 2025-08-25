@@ -101,9 +101,21 @@ export class ProductionCCTPService {
       if (response.ok) {
         const allowanceData = await response.json();
         if (allowanceData.allowance !== undefined) {
-          // Convert allowance to USDC units (6 decimals)
-          const remainingAllowance = BigNumber.from(Math.floor(allowanceData.allowance * 1e6));
-          return amount.lte(remainingAllowance);
+          // Convert allowance to USDC units (6 decimals) safely
+          try {
+            // Handle large numbers by converting to string first
+            const allowanceNumber = Number(allowanceData.allowance);
+            if (allowanceNumber > Number.MAX_SAFE_INTEGER / 1e6) {
+              // If allowance is too large, assume it's effectively unlimited
+              return true;
+            }
+            const remainingAllowance = BigNumber.from(Math.floor(allowanceNumber * 1e6).toString());
+            return amount.lte(remainingAllowance);
+          } catch (conversionError) {
+            console.warn('Failed to convert allowance, using fallback:', conversionError);
+            // Fallback to threshold check
+            return amount.lt(this.FAST_TRANSFER_THRESHOLD);
+          }
         }
       }
       

@@ -1,5 +1,5 @@
-import { 
-  GasFlowSDK, 
+import {
+  GasFlowSDK,
   ProductionCCTPService,
   CCTPServiceFactory,
   getCCTPAddresses,
@@ -40,9 +40,9 @@ async function main() {
   // 4. Execute cross-chain transaction
   try {
     console.log('🚀 Executing cross-chain transaction...');
-    
+
     const result = await gasFlowSDK.execute({
-      to: '0x742C7f0f6b6d43A35556D5F7FAF7a93AC8c3b7B8', // Target contract
+      to: '0x1A00D9a88fC5ccF7a52E268307F98739f770A956', // Target contract
       data: '0x', // Function call data
       executeOn: 421614, // Execute on Arbitrum Sepolia
       payFromChain: 11155111, // Pay from Ethereum Sepolia
@@ -54,7 +54,7 @@ async function main() {
     console.log(`Executed on Chain: ${result.executedOnChain}`);
     console.log(`Gas Payment Chain: ${result.gasPaymentChain}`);
     console.log(`Total Cost: ${ethers.utils.formatUnits(result.totalCostUSDC, 6)} USDC`);
-    
+
     if (result.estimatedSavings) {
       console.log(`Estimated Savings: ${ethers.utils.formatUnits(result.estimatedSavings, 6)} USDC`);
     }
@@ -82,7 +82,7 @@ async function directCCTPExample() {
 
   try {
     console.log('🔗 Initiating direct CCTP bridge...');
-    
+
     const bridgeResult = await cctpService.initiateBridge({
       amount: ethers.utils.parseUnits('10', 6), // 10 USDC
       fromChain: 11155111, // Ethereum Sepolia
@@ -103,7 +103,7 @@ async function directCCTPExample() {
     //   421614,
     //   bridgeResult.transferObject
     // );
-    
+
     // console.log(`Destination Transaction: ${destinationTx}`);
 
   } catch (error) {
@@ -144,10 +144,10 @@ async function testCCTPService(service: any) {
   const amount = ethers.utils.parseUnits('1', 6);
   const fee = await service.estimateBridgeFee(amount, 11155111, 421614);
   console.log(`Bridge fee: ${ethers.utils.formatUnits(fee, 6)} USDC`);
-  
+
   const canUseFast = await service.canUseFastTransfer(amount, 11155111, 421614);
   console.log(`Can use Fast Transfer: ${canUseFast}`);
-  
+
   const time = await service.estimateTransferTime(amount, 11155111, 421614, canUseFast);
   console.log(`Estimated time: ${time} seconds`);
 }
@@ -157,14 +157,14 @@ async function testCCTPService(service: any) {
  */
 function contractAddressExample() {
   console.log('📋 Circle CCTP Contract Addresses:');
-  
+
   // Get addresses for Ethereum Sepolia
   const ethSepoliaAddresses = getCCTPAddresses(11155111, true);
   console.log('Ethereum Sepolia:');
   console.log(`  TokenMessenger: ${ethSepoliaAddresses.tokenMessenger}`);
   console.log(`  MessageTransmitter: ${ethSepoliaAddresses.messageTransmitter}`);
   console.log(`  USDC: ${ethSepoliaAddresses.usdc}`);
-  
+
   // Get CCTP domains
   console.log('\n🌐 CCTP Domains:');
   console.log(`Ethereum Sepolia: ${getCCTPDomain(11155111)}`);

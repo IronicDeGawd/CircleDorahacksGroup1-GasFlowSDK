@@ -17,6 +17,8 @@ export class SimpleCCTPService {
     public useTestnet: boolean = true
   ) {
     this.apiKey = apiKey;
+    console.log('🎭 SimpleCCTPService initialized (mock implementation)');
+    console.log('🎭 [MOCK] Using simplified CCTP for development/demo purposes');
   }
 
   async estimateBridgeFee(
@@ -29,8 +31,11 @@ export class SimpleCCTPService {
     
     // Add variable fee based on chains
     const chainComplexityFee = this.getChainComplexityFee(fromChain, toChain);
+    const totalFee = baseFee.add(chainComplexityFee);
     
-    return baseFee.add(chainComplexityFee);
+    console.log(`🎭 [MOCK] Bridge fee estimated: $${(Number(totalFee) / 1e6).toFixed(4)} USDC (${fromChain} → ${toChain})`);
+    
+    return totalFee;
   }
 
   async canUseFastTransfer(
@@ -39,7 +44,9 @@ export class SimpleCCTPService {
     toChain: ChainId
   ): Promise<boolean> {
     // Fast transfer available for amounts under threshold
-    return amount.lt(this.FAST_TRANSFER_THRESHOLD);
+    const canUseFast = amount.lt(this.FAST_TRANSFER_THRESHOLD);
+    console.log(`🎭 [MOCK] Fast transfer available: ${canUseFast} (amount: $${(Number(amount) / 1e6).toFixed(2)} USDC, threshold: $${(Number(this.FAST_TRANSFER_THRESHOLD) / 1e6).toFixed(0)})`);
+    return canUseFast;
   }
 
   async estimateTransferTime(
@@ -86,11 +93,11 @@ export class SimpleCCTPService {
       useFastTransfer
     } = params;
 
-    console.log(`Initiating CCTP bridge (simplified):`, {
-      amount: amount.toString(),
+    console.log(`🎭 [MOCK] Initiating CCTP bridge (simplified implementation):`, {
+      amount: `$${(Number(amount) / 1e6).toFixed(4)} USDC`,
       fromChain,
       toChain,
-      recipient,
+      recipient: `${recipient.slice(0, 6)}...${recipient.slice(-4)}`,
       useFastTransfer,
     });
 
@@ -110,6 +117,9 @@ export class SimpleCCTPService {
 
     // Mock response structure
     const mockTxHash = '0x' + Math.random().toString(16).substr(2, 64);
+    console.log(`🎭 [MOCK] Bridge transaction hash generated: ${mockTxHash}`);
+    console.log(`🎭 [MOCK] Estimated arrival time: ${estimatedTime} seconds`);
+    console.log(`🎭 [MOCK] Bridge fee: $${(Number(bridgeFee) / 1e6).toFixed(4)} USDC`);
     
     return {
       transactionHash: mockTxHash,
@@ -124,13 +134,15 @@ export class SimpleCCTPService {
     fromChain: ChainId,
     toChain: ChainId
   ): Promise<string> {
-    console.log(`Waiting for CCTP completion: ${transactionHash}`);
+    console.log(`🎭 [MOCK] Waiting for CCTP completion: ${transactionHash}`);
     
     // Simulate waiting time
     await new Promise(resolve => setTimeout(resolve, 2000));
     
     // Mock completion with destination transaction hash
-    return '0x' + Math.random().toString(16).substr(2, 64);
+    const destinationTxHash = '0x' + Math.random().toString(16).substr(2, 64);
+    console.log(`🎭 [MOCK] Bridge completed with destination transaction: ${destinationTxHash}`);
+    return destinationTxHash;
   }
 
   async getBridgeStatus(
@@ -141,7 +153,9 @@ export class SimpleCCTPService {
     const statuses: Array<'pending' | 'attested' | 'completed' | 'failed'> = 
       ['pending', 'attested', 'completed'];
     
-    return statuses[Math.floor(Math.random() * statuses.length)];
+    const status = statuses[Math.floor(Math.random() * statuses.length)];
+    console.log(`🎭 [MOCK] Bridge status for ${transactionHash.slice(0, 8)}...: ${status}`);
+    return status;
   }
 
   async getOptimalRoute(

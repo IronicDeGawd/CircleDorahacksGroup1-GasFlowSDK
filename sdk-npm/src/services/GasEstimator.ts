@@ -35,6 +35,7 @@ export class GasEstimator {
   private async getETHPrice(): Promise<number> {
     try {
       if (this.useTestnet) {
+        console.log('🎭 [MOCK] Using testnet fallback price for ETH: $2000');
         return 2000; // Mock price for testnet
       }
       
@@ -44,7 +45,7 @@ export class GasEstimator {
       const data = await response.json();
       return data.ethereum.usd;
     } catch (error) {
-      console.warn('Failed to fetch ETH price, using fallback:', error);
+      console.warn('⚠️ [FALLBACK] Failed to fetch ETH price, using fallback: $2000', error);
       return 2000; // Fallback price
     }
   }
@@ -157,8 +158,11 @@ export class GasEstimator {
         gasLimit = transaction.gasLimit;
       } else {
         try {
+          // Validate and checksum the address to prevent checksum errors
+          const toAddress = ethers.utils.getAddress(transaction.to);
+          
           const estimatedGas = await provider.estimateGas({
-            to: transaction.to,
+            to: toAddress,
             value: transaction.value || 0,
             data: transaction.data || '0x',
           });

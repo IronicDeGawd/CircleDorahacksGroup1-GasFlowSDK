@@ -44,7 +44,7 @@ export class PaymasterService {
 
     try {
       // Mock implementation - in real version this would call Circle's Paymaster API
-      console.log(`[MOCK] Getting Paymaster quote for chain ${chainId}`);
+      console.log(`🎭 [MOCK] Getting Paymaster quote for chain ${chainId}`);
 
       // Estimate gas parameters
       const callGasLimit = transaction.gasLimit || BigNumber.from(21000);
@@ -147,8 +147,8 @@ export class PaymasterService {
   ): Promise<string> {
     if (!this.bundlerClient) {
       // Fallback to mock for development/testing when no Alchemy key provided
-      console.warn('[MOCK] No Alchemy API key configured - using mock implementation');
-      console.log(`[MOCK] Submitting UserOperation to chain ${chainId}`);
+      console.warn('🎭 [MOCK] No Alchemy API key configured - using mock implementation');
+      console.log(`🎭 [MOCK] Submitting UserOperation to chain ${chainId}`);
       console.log('UserOperation:', userOp);
       await new Promise(resolve => setTimeout(resolve, 1000));
       return '0x' + Math.random().toString(16).substr(2, 64);
@@ -172,7 +172,7 @@ export class PaymasterService {
     chainId: ChainId
   ): Promise<'pending' | 'included' | 'failed'> {
     // Mock implementation
-    console.log(`[MOCK] Checking operation status: ${operationHash}`);
+    console.log(`🎭 [MOCK] Checking operation status: ${operationHash}`);
     
     // Simulate random status
     const statuses = ['pending', 'included'] as const;
