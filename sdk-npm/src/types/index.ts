@@ -22,6 +22,9 @@ export interface GasFlowConfig {
   // Alchemy Bundler Configuration
   alchemyApiKey?: string;
   bundlerUrl?: string;
+  
+  // CoinGecko API Configuration
+  coinGeckoApiKey?: string;
 }
 
 export interface GasFlowTransaction {

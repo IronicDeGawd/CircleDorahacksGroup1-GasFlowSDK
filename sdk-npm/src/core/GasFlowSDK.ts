@@ -36,7 +36,7 @@ export class GasFlowSDK {
       : DEFAULT_SUPPORTED_CHAINS;
 
     this.balanceManager = new BalanceManager(supportedChains, useTestnet);
-    this.gasEstimator = new GasEstimator(supportedChains, useTestnet);
+    this.gasEstimator = new GasEstimator(supportedChains, useTestnet, this.config.coinGeckoApiKey);
     this.cctpService = CCTPServiceFactory.create({
       apiKey: this.config.apiKey,
       useTestnet,

@@ -1,6 +1,6 @@
 {
   "name": "@gasflow/sdk",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Universal Cross-Chain Gas Payment SDK powered by Circle CCTP V2 and Paymaster",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

@@ -17,7 +17,8 @@ export class GasEstimator {
 
   constructor(
     private supportedChains: ChainId[],
-    private useTestnet: boolean = true
+    private useTestnet: boolean = true,
+    private coinGeckoApiKey?: string
   ) {
     this.initializeProviders();
   }
@@ -32,56 +33,76 @@ export class GasEstimator {
     }
   }
 
-  private async getETHPrice(): Promise<number> {
+  private priceCache = new Map<string, { price: number; timestamp: number }>();
+  private readonly PRICE_CACHE_DURATION = 60000; // 60 seconds (matches CoinGecko update frequency)
+
+  private async getAllPrices(): Promise<{ eth: number; avax: number; matic: number }> {
+    if (this.useTestnet) {
+      console.log('🎭 [MOCK] Using testnet fallback prices (reason: testnet mode avoids external API calls)');
+      return { eth: 2000, avax: 30, matic: 0.8 };
+    }
+
     try {
-      if (this.useTestnet) {
-        console.log('🎭 [MOCK] Using testnet fallback price for ETH: $2000');
-        return 2000; // Mock price for testnet
+      const baseUrl = 'https://api.coingecko.com/api/v3/simple/price?ids=ethereum,avalanche-2,matic-network&vs_currencies=usd';
+      const url = this.coinGeckoApiKey ? `${baseUrl}&x_cg_demo_api_key=${this.coinGeckoApiKey}` : baseUrl;
+      
+      const response = await fetch(url);
+      
+      if (!response.ok) {
+        throw new Error(`CoinGecko API returned ${response.status}: ${response.statusText}`);
       }
       
-      const response = await fetch(
-        'https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd'
-      );
       const data = await response.json();
-      return data.ethereum.usd;
+      
+      // Validate response structure
+      if (!data.ethereum?.usd || !data['avalanche-2']?.usd || !data['matic-network']?.usd) {
+        throw new Error('Invalid response format from CoinGecko API');
+      }
+      
+      const prices = {
+        eth: data.ethereum.usd,
+        avax: data['avalanche-2'].usd,
+        matic: data['matic-network'].usd
+      };
+      
+      const apiType = this.coinGeckoApiKey ? 'Pro API' : 'Public API';
+      console.log(`✅ [REAL] All prices fetched from CoinGecko ${apiType}: ETH $${prices.eth}, AVAX $${prices.avax}, MATIC $${prices.matic}`);
+      
+      // Cache the prices
+      const timestamp = Date.now();
+      this.priceCache.set('eth', { price: prices.eth, timestamp });
+      this.priceCache.set('avax', { price: prices.avax, timestamp });
+      this.priceCache.set('matic', { price: prices.matic, timestamp });
+      
+      return prices;
     } catch (error) {
-      console.warn('⚠️ [FALLBACK] Failed to fetch ETH price, using fallback: $2000', error);
-      return 2000; // Fallback price
+      const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+      console.warn(`⚠️ [FALLBACK] Using fallback prices (reason: ${errorMsg})`);
+      return { eth: 2000, avax: 30, matic: 0.8 };
     }
+  }
+
+  private async getCachedPrice(token: 'eth' | 'avax' | 'matic'): Promise<number> {
+    const cached = this.priceCache.get(token);
+    if (cached && Date.now() - cached.timestamp < this.PRICE_CACHE_DURATION) {
+      return cached.price;
+    }
+
+    // If cache is stale or missing, fetch all prices
+    const prices = await this.getAllPrices();
+    return prices[token];
+  }
+
+  private async getETHPrice(): Promise<number> {
+    return this.getCachedPrice('eth');
   }
 
   private async getAVAXPrice(): Promise<number> {
-    try {
-      if (this.useTestnet) {
-        return 30; // Mock price for testnet
-      }
-      
-      const response = await fetch(
-        'https://api.coingecko.com/api/v3/simple/price?ids=avalanche-2&vs_currencies=usd'
-      );
-      const data = await response.json();
-      return data['avalanche-2'].usd;
-    } catch (error) {
-      console.warn('Failed to fetch AVAX price, using fallback:', error);
-      return 30; // Fallback price
-    }
+    return this.getCachedPrice('avax');
   }
 
   private async getMATICPrice(): Promise<number> {
-    try {
-      if (this.useTestnet) {
-        return 0.8; // Mock price for testnet
-      }
-      
-      const response = await fetch(
-        'https://api.coingecko.com/api/v3/simple/price?ids=matic-network&vs_currencies=usd'
-      );
-      const data = await response.json();
-      return data['matic-network'].usd;
-    } catch (error) {
-      console.warn('Failed to fetch MATIC price, using fallback:', error);
-      return 0.8; // Fallback price
-    }
+    return this.getCachedPrice('matic');
   }
 
   private async getTokenPrice(chainId: ChainId): Promise<number> {
@@ -128,7 +149,8 @@ export class GasEstimator {
       this.gasPriceCache.set(chainId, gasPriceData);
       return gasPriceData;
     } catch (error) {
-      console.error(`Failed to fetch gas price for chain ${chainId}:`, error);
+      const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+      console.warn(`⚠️ [FALLBACK] Using fallback gas price 20 gwei for chain ${chainId} (reason: ${errorMsg})`);
       
       // Fallback gas prices (in wei)
       const fallbackPrice = BigNumber.from('20000000000'); // 20 gwei
@@ -168,7 +190,8 @@ export class GasEstimator {
           });
           gasLimit = estimatedGas.mul(110).div(100); // Add 10% buffer
         } catch (error) {
-          console.warn('Gas estimation failed, using fallback:', error);
+          const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+          console.warn(`⚠️ [FALLBACK] Using fallback gas limit 21000 (reason: ${errorMsg})`);
           gasLimit = BigNumber.from(21000); // Standard transfer
         }
       }
@@ -218,7 +241,8 @@ export class GasEstimator {
         estimatedTime,
       };
     } catch (error) {
-      console.error(`Gas estimation failed for chain ${chainId}:`, error);
+      const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+      console.warn(`⚠️ [FALLBACK] Using complete fallback gas estimate for chain ${chainId} (reason: ${errorMsg})`);
       
       // Return fallback estimate
       return {
