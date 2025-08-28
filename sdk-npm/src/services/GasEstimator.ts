@@ -34,14 +34,43 @@ export class GasEstimator {
   }
 
   private priceCache = new Map<string, { price: number; timestamp: number }>();
-  private readonly PRICE_CACHE_DURATION = 60000; // 60 seconds (matches CoinGecko update frequency)
+  private readonly PRICE_CACHE_DURATION = 120000; // 2 minutes (as requested)
+  private pricePromiseCache = new Map<string, Promise<{ eth: number; avax: number; matic: number }>>();
+  private readonly PROMISE_CACHE_DURATION = 5000; // 5 seconds to prevent multiple simultaneous calls
 
   private async getAllPrices(): Promise<{ eth: number; avax: number; matic: number }> {
-    if (this.useTestnet) {
-      console.log('🎭 [MOCK] Using testnet fallback prices (reason: testnet mode avoids external API calls)');
+    const cacheKey = 'all_prices';
+    
+    // Check if we have a recent promise in flight to avoid duplicate calls
+    if (this.pricePromiseCache.has(cacheKey)) {
+      const existingPromise = this.pricePromiseCache.get(cacheKey)!;
+      try {
+        return await existingPromise;
+      } catch (error) {
+        // If promise failed, remove it and continue with new fetch
+        this.pricePromiseCache.delete(cacheKey);
+      }
+    }
+
+    // Use real prices if CoinGecko API key is available, even in testnet mode
+    if (this.useTestnet && !this.coinGeckoApiKey) {
+      console.log('🎭 [MOCK] Using testnet fallback prices (reason: no CoinGecko API key provided)');
       return { eth: 2000, avax: 30, matic: 0.8 };
     }
 
+    // Create and cache the promise
+    const pricePromise = this.fetchPricesFromAPI();
+    this.pricePromiseCache.set(cacheKey, pricePromise);
+    
+    // Clean up promise cache after timeout
+    setTimeout(() => {
+      this.pricePromiseCache.delete(cacheKey);
+    }, this.PROMISE_CACHE_DURATION);
+
+    return pricePromise;
+  }
+
+  private async fetchPricesFromAPI(): Promise<{ eth: number; avax: number; matic: number }> {
     try {
       const baseUrl = 'https://api.coingecko.com/api/v3/simple/price?ids=ethereum,avalanche-2,matic-network&vs_currencies=usd';
       const url = this.coinGeckoApiKey ? `${baseUrl}&x_cg_demo_api_key=${this.coinGeckoApiKey}` : baseUrl;
@@ -217,7 +246,29 @@ export class GasEstimator {
       // Convert to USDC
       const tokenPrice = await this.getTokenPrice(chainId);
       const gasCostUSD = parseFloat(ethers.utils.formatEther(gasCostETH)) * tokenPrice;
-      const gasCostUSDC = BigNumber.from(Math.ceil(gasCostUSD * 1e6)); // USDC has 6 decimals
+      let gasCostUSDC = BigNumber.from(Math.ceil(gasCostUSD * 1e6)); // USDC has 6 decimals
+      
+      console.log(`💰 Gas cost calculation for chain ${chainId}:`, {
+        gasLimit: gasLimit.toString(),
+        gasPrice: ethers.utils.formatUnits(gasPrice, 'gwei') + ' gwei',
+        gasCostETH: ethers.utils.formatEther(gasCostETH),
+        tokenPrice: `$${tokenPrice}`,
+        gasCostUSD: `$${gasCostUSD.toFixed(6)}`,
+        gasCostUSDC: ethers.utils.formatUnits(gasCostUSDC, 6) + ' USDC'
+      });
+      
+      // Enforce minimum transfer amount for CCTP compatibility
+      // Circle CCTP requires minimum 0.01 USDC, but for practical bridging we use 0.1 USDC
+      const MIN_BRIDGE_AMOUNT_USDC = BigNumber.from(10000); // 0.01 USDC (6 decimals) - Circle minimum
+      const PRACTICAL_MIN_AMOUNT = BigNumber.from(100000); // 0.1 USDC (6 decimals) - Practical minimum for bridging
+      
+      if (gasCostUSDC.lt(MIN_BRIDGE_AMOUNT_USDC)) {
+        console.log(`⚠️ Gas cost ${ethers.utils.formatUnits(gasCostUSDC, 6)} USDC below Circle CCTP minimum, enforcing ${ethers.utils.formatUnits(PRACTICAL_MIN_AMOUNT, 6)} USDC`);
+        gasCostUSDC = PRACTICAL_MIN_AMOUNT; // Use practical minimum for better UX
+      } else if (gasCostUSDC.lt(PRACTICAL_MIN_AMOUNT)) {
+        console.log(`ℹ️ Gas cost ${ethers.utils.formatUnits(gasCostUSDC, 6)} USDC is small but above Circle minimum`);
+        // Don't enforce practical minimum if above Circle minimum - let user choose
+      }
 
       // Estimate transaction time based on urgency
       let estimatedTime: number;

@@ -56,13 +56,25 @@ export class ProductionCCTPService {
     toChain: ChainId
   ): Promise<BigNumber> {
     try {
-      // Query Circle's fee API if available
+      // Validate CCTP domain support first
       const fromDomain = getCCTPDomain(fromChain);
       const toDomain = getCCTPDomain(toChain);
       
+      // Add timeout to prevent hanging requests during route analysis
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+      
       const response = await fetch(
-        `${this.baseApiUrl}/v2/burn/USDC/fees/${fromDomain}/${toDomain}`
+        `${this.baseApiUrl}/v2/burn/USDC/fees/${fromDomain}/${toDomain}`,
+        { 
+          signal: controller.signal,
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
       );
+      
+      clearTimeout(timeoutId);
 
       if (response.ok) {
         const feeData = await response.json();
@@ -71,15 +83,23 @@ export class ProductionCCTPService {
           // 1 basis point = 0.01%, so minimumFee * amount / 10000
           const feeInBasisPoints = feeData.data.minimumFee;
           const feeAmount = amount.mul(feeInBasisPoints).div(10000);
+          console.log(`✅ Circle API fee: ${ethers.utils.formatUnits(feeAmount, 6)} USDC for ${fromChain}→${toChain}`);
           return feeAmount;
         }
       }
       
       // Fallback to chain-specific calculation
+      console.log(`⚠️ Circle API unavailable, using estimated fee for ${fromChain}→${toChain}`);
       return this.calculateEstimatedFee(fromChain, toChain);
       
     } catch (error) {
-      console.warn('Failed to fetch Circle API fees, using estimation:', error);
+      // More specific error handling for route analysis
+      const err = error as any;
+      if (err?.name === 'AbortError') {
+        console.warn(`Circle API timeout for ${fromChain}→${toChain}, using estimation`);
+      } else {
+        console.warn(`Failed to fetch Circle API fees for ${fromChain}→${toChain}:`, err?.message || error);
+      }
       return this.calculateEstimatedFee(fromChain, toChain);
     }
   }
@@ -90,13 +110,21 @@ export class ProductionCCTPService {
     toChain: ChainId
   ): Promise<boolean> {
     try {
-      // Check Fast Transfer allowance via Circle API
-      const fromDomain = getCCTPDomain(fromChain);
-      const toDomain = getCCTPDomain(toChain);
+      // Check Fast Transfer allowance via Circle API with timeout
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 second timeout
       
       const response = await fetch(
-        `${this.baseApiUrl}/v2/fastBurn/USDC/allowance`
+        `${this.baseApiUrl}/v2/fastBurn/USDC/allowance`,
+        { 
+          signal: controller.signal,
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
       );
+      
+      clearTimeout(timeoutId);
 
       if (response.ok) {
         const allowanceData = await response.json();
@@ -112,7 +140,7 @@ export class ProductionCCTPService {
             const remainingAllowance = BigNumber.from(Math.floor(allowanceNumber * 1e6).toString());
             return amount.lte(remainingAllowance);
           } catch (conversionError) {
-            console.warn('Failed to convert allowance, using fallback:', conversionError);
+            console.warn(`Failed to convert allowance for ${fromChain}→${toChain}, using fallback:`, conversionError);
             // Fallback to threshold check
             return amount.lt(this.FAST_TRANSFER_THRESHOLD);
           }
@@ -123,7 +151,12 @@ export class ProductionCCTPService {
       return amount.lt(this.FAST_TRANSFER_THRESHOLD);
       
     } catch (error) {
-      console.warn('Failed to check Fast Transfer allowance:', error);
+      const err = error as any;
+      if (err?.name === 'AbortError') {
+        console.warn(`Fast transfer API timeout for ${fromChain}→${toChain}, using threshold fallback`);
+      } else {
+        console.warn(`Failed to check Fast Transfer allowance for ${fromChain}→${toChain}:`, err?.message || error);
+      }
       return amount.lt(this.FAST_TRANSFER_THRESHOLD);
     }
   }
@@ -134,33 +167,61 @@ export class ProductionCCTPService {
     toChain: ChainId,
     useFastTransfer?: boolean
   ): Promise<number> {
-    const shouldUseFast = useFastTransfer ?? 
-      await this.canUseFastTransfer(amount, fromChain, toChain);
+    try {
+      // If fast transfer preference is not specified, check availability with timeout
+      let shouldUseFast = useFastTransfer;
+      if (shouldUseFast === undefined) {
+        // Add timeout protection for the fast transfer check
+        const timeoutPromise = new Promise<boolean>((_, reject) => {
+          setTimeout(() => reject(new Error("Fast transfer check timeout")), 2000);
+        });
+        
+        try {
+          shouldUseFast = await Promise.race([
+            this.canUseFastTransfer(amount, fromChain, toChain),
+            timeoutPromise
+          ]);
+          console.log(`✅ Fast transfer check for ${fromChain}→${toChain}: ${shouldUseFast}`);
+        } catch (error) {
+          // If fast transfer check fails/times out, assume standard transfer
+          console.warn(`⚠️ Fast transfer check failed for ${fromChain}→${toChain}, using standard timing:`, error);
+          shouldUseFast = false;
+        }
+      }
 
-    if (shouldUseFast) {
-      return 30; // Fast transfer: ~30 seconds
+      if (shouldUseFast) {
+        console.log(`🚀 Fast transfer estimated time for ${fromChain}→${toChain}: 30 seconds`);
+        return 30; // Fast transfer: ~30 seconds
+      }
+
+      // Standard transfer times based on chain finality
+      const fromConfig = getChainConfig(fromChain, this.useTestnet);
+      const finalityTimes: Record<string, number> = {
+        'Ethereum Sepolia': 900,    // 15 minutes
+        'Ethereum': 900,            // 15 minutes
+        'Arbitrum Sepolia': 120,    // 2 minutes  
+        'Arbitrum One': 120,        // 2 minutes
+        'Base Sepolia': 120,        // 2 minutes
+        'Base': 120,                // 2 minutes
+        'Avalanche Fuji': 60,       // 1 minute
+        'Avalanche': 60,            // 1 minute
+        'Polygon Amoy': 120,        // 2 minutes
+        'Polygon': 120,             // 2 minutes
+      };
+
+      const fromFinality = finalityTimes[fromConfig.name] || 300;
+      const attestationTime = 60; // Circle attestation
+      const executionTime = 30;   // Destination execution
+      const totalTime = fromFinality + attestationTime + executionTime;
+
+      console.log(`🕒 Standard transfer estimated time for ${fromChain}→${toChain}: ${Math.floor(totalTime/60)} minutes`);
+      return totalTime;
+      
+    } catch (error) {
+      // If any error occurs, return a safe default
+      console.warn(`⚠️ Transfer time estimation failed for ${fromChain}→${toChain}, using default:`, error);
+      return 600; // 10 minutes default
     }
-
-    // Standard transfer times based on chain finality
-    const fromConfig = getChainConfig(fromChain, this.useTestnet);
-    const finalityTimes: Record<string, number> = {
-      'Ethereum Sepolia': 900,    // 15 minutes
-      'Ethereum': 900,            // 15 minutes
-      'Arbitrum Sepolia': 120,    // 2 minutes  
-      'Arbitrum One': 120,        // 2 minutes
-      'Base Sepolia': 120,        // 2 minutes
-      'Base': 120,                // 2 minutes
-      'Avalanche Fuji': 60,       // 1 minute
-      'Avalanche': 60,            // 1 minute
-      'Polygon Amoy': 120,        // 2 minutes
-      'Polygon': 120,             // 2 minutes
-    };
-
-    const fromFinality = finalityTimes[fromConfig.name] || 300;
-    const attestationTime = 60; // Circle attestation
-    const executionTime = 30;   // Destination execution
-
-    return fromFinality + attestationTime + executionTime;
   }
 
   async initiateBridge(params: CCTPTransferParams): Promise<CCTPTransferResult> {
@@ -174,6 +235,9 @@ export class ProductionCCTPService {
 
     // Validate parameters
     this.validateTransferParams(params);
+    
+    // Additional amount validation for CCTP requirements
+    this.validateBridgeAmount(amount, fromChain, toChain);
 
     const signer = this.getSigner(fromChain);
     const addresses = getCCTPAddresses(fromChain, this.useTestnet);
@@ -198,31 +262,54 @@ export class ProductionCCTPService {
       const usdc = USDC__factory.connect(addresses.usdc, signer);
       const signerAddress = await signer.getAddress();
 
-      // 1. Check and approve USDC if needed
+      // 1. Check USDC balance
+      const usdcBalance = await usdc.balanceOf(signerAddress);
+      console.log(`💰 USDC balance check:`, {
+        userAddress: signerAddress,
+        balance: ethers.utils.formatUnits(usdcBalance, 6) + ' USDC',
+        required: ethers.utils.formatUnits(amount, 6) + ' USDC',
+        sufficient: usdcBalance.gte(amount)
+      });
+
+      if (usdcBalance.lt(amount)) {
+        throw new Error(
+          `Insufficient USDC balance. Required: ${ethers.utils.formatUnits(amount, 6)} USDC, ` +
+          `Available: ${ethers.utils.formatUnits(usdcBalance, 6)} USDC. ` +
+          `Please ensure you have sufficient USDC on ${getChainConfig(fromChain, this.useTestnet).name}.`
+        );
+      }
+
+      // 2. Check and approve USDC if needed
       const currentAllowance = await usdc.allowance(
         signerAddress,
         addresses.tokenMessenger
       );
+      
+      console.log(`🔐 USDC allowance check:`, {
+        currentAllowance: ethers.utils.formatUnits(currentAllowance, 6) + ' USDC',
+        required: ethers.utils.formatUnits(amount, 6) + ' USDC',
+        needsApproval: currentAllowance.lt(amount)
+      });
       
       if (currentAllowance.lt(amount)) {
         console.log('Approving USDC spending...');
         const approveTx = await usdc.approve(
           addresses.tokenMessenger,
           amount,
-          { gasLimit: 100000 } // Reasonable gas limit for approval
+          { gasLimit: BigNumber.from(100000) } // Reasonable gas limit for approval
         );
         await approveTx.wait();
         console.log('USDC approval completed:', approveTx.hash);
       }
 
-      // 2. Initiate cross-chain burn
+      // 3. Initiate cross-chain burn
       console.log('Initiating depositForBurn...');
       const burnTx = await tokenMessenger.depositForBurn(
         amount,
         destinationDomain,
         this.addressToBytes32(recipient),
         addresses.usdc,
-        { gasLimit: 200000 } // Reasonable gas limit for burn
+        { gasLimit: BigNumber.from(200000) } // Reasonable gas limit for burn
       );
 
       const receipt = await burnTx.wait();
@@ -385,6 +472,29 @@ export class ProductionCCTPService {
     }
   }
 
+  private validateBridgeAmount(amount: BigNumber, fromChain: ChainId, toChain: ChainId): void {
+    // Minimum transfer amount for Circle CCTP (0.01 USDC = 10,000 with 6 decimals)
+    const MIN_CCTP_AMOUNT = BigNumber.from(10000);
+    
+    if (amount.lt(MIN_CCTP_AMOUNT)) {
+      throw new Error(
+        `Transfer amount ${ethers.utils.formatUnits(amount, 6)} USDC is below Circle CCTP minimum of 0.01 USDC. ` +
+        `This is likely a gas estimation issue. Please check the gas cost calculation.`
+      );
+    }
+
+    // Maximum reasonable transfer amount check (safety measure)
+    const MAX_REASONABLE_AMOUNT = BigNumber.from('1000000000000'); // 1M USDC
+    if (amount.gt(MAX_REASONABLE_AMOUNT)) {
+      console.warn(
+        `⚠️ Large transfer amount detected: ${ethers.utils.formatUnits(amount, 6)} USDC. ` +
+        `Verify this is intended.`
+      );
+    }
+
+    console.log(`✅ Bridge amount validation passed: ${ethers.utils.formatUnits(amount, 6)} USDC from chain ${fromChain} to ${toChain}`);
+  }
+
   private addressToBytes32(address: string): string {
     return ethers.utils.hexZeroPad(address, 32);
   }
@@ -505,7 +615,7 @@ export class ProductionCCTPService {
     const mintTx = await messageTransmitter.receiveMessage(
       attestation.message,
       attestation.signature,
-      { gasLimit: 300000 } // Reasonable gas limit for receive
+      { gasLimit: BigNumber.from(300000) } // Reasonable gas limit for receive
     );
     
     const receipt = await mintTx.wait();

@@ -207,7 +207,11 @@ export class RouteOptimizer {
     preferredChain: ChainId
   ): { chainId: ChainId; reason: string; estimatedSavings?: BigNumber } {
     if (routes.length === 0) {
-      throw new Error('No viable routes found');
+      throw new Error(
+        'No viable routes found. This may be due to insufficient balances, ' +
+        'network connectivity issues, or CCTP service unavailability. ' +
+        'Please check your USDC balances and try again.'
+      );
     }
 
     const bestRoute = routes[0];

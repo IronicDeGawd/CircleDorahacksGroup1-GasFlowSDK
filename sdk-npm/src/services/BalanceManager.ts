@@ -61,7 +61,9 @@ export class BalanceManager {
       const balance = await usdcContract.balanceOf(address);
       const decimals = await usdcContract.decimals();
       
-      const adjustedBalance = balance.div(BigNumber.from(10).pow(decimals));
+      // Keep balance in raw USDC units (6 decimals) for SDK calculations
+      // The division was causing precision loss for balance comparisons
+      const adjustedBalance = balance;
       
       const balanceInfo: BalanceInfo = {
         chainId,
