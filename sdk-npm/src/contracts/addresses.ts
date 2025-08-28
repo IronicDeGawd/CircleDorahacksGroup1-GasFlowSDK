@@ -17,8 +17,8 @@ export interface CCTPAddresses {
 // Mainnet Addresses - TokenMessengerV2 is consistent across all chains
 const MAINNET_TOKEN_MESSENGER = '0x28b5a0e9C621a5BadaA536219b3a228C8168cf5d';
 
-// Testnet Addresses - TokenMessengerV2 is consistent across all testnets  
-const TESTNET_TOKEN_MESSENGER = '0x8FE6B999Dc680CcFDD5Bf7EB0974218be2542DAA';
+// Testnet Addresses - TokenMessengerV2 is consistent across all Sepolia testnets  
+const TESTNET_TOKEN_MESSENGER = '0x9f3B8679c73C2Fef8b59B4f3444d4e156fb70AA5';
 
 export const CCTP_MAINNET_ADDRESSES: Record<ChainId, CCTPAddresses> = {
   // Ethereum Mainnet
@@ -75,15 +75,15 @@ export const CCTP_TESTNET_ADDRESSES: Record<ChainId, CCTPAddresses> = {
   11155111: {
     tokenMessenger: TESTNET_TOKEN_MESSENGER,
     messageTransmitter: '0x7865fAfC2db2093669d92c0F33AeEF291086BEFD',
-    tokenMinter: '0x71a5034fFF9054BcB84c47D5E30Ec03cf9dC83E2C',
+    tokenMinter: '0xE997d7d2F6E065a9A93Fa2175E878Fb9081F1f0A',
     usdc: '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238' // Test USDC
   },
 
   // Arbitrum Sepolia
   421614: {
     tokenMessenger: TESTNET_TOKEN_MESSENGER,
-    messageTransmitter: '0xaCF1ceeF35caAc005e15888dDb8A3515C41B4872',
-    tokenMinter: '0x71a5034fFF9054BcB84c47D5E30Ec03cf9dC83E2C',
+    messageTransmitter: '0x7865fAfC2db2093669d92c0F33AeEF291086BEFD',
+    tokenMinter: '0xE997d7d2F6E065a9A93Fa2175E878Fb9081F1f0A',
     usdc: '0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d' // Test USDC
   },
 
@@ -91,15 +91,15 @@ export const CCTP_TESTNET_ADDRESSES: Record<ChainId, CCTPAddresses> = {
   84532: {
     tokenMessenger: TESTNET_TOKEN_MESSENGER,
     messageTransmitter: '0x7865fAfC2db2093669d92c0F33AeEF291086BEFD',
-    tokenMinter: '0x71a5034fFF9054BcB84c47D5E30Ec03cf9dC83E2C',
+    tokenMinter: '0xE997d7d2F6E065a9A93Fa2175E878Fb9081F1f0A',
     usdc: '0x036CbD53842c5426634e7929541eC2318f3dCF7e' // Test USDC
   },
 
   // Avalanche Fuji
   43113: {
     tokenMessenger: TESTNET_TOKEN_MESSENGER,
-    messageTransmitter: '0xa9fB1b3009DCb79E2fe346c16a604B8Fa8aE0a79',
-    tokenMinter: '0x71a5034fFF9054BcB84c47D5E30Ec03cf9dC83E2C',
+    messageTransmitter: '0x7865fAfC2db2093669d92c0F33AeEF291086BEFD',
+    tokenMinter: '0xE997d7d2F6E065a9A93Fa2175E878Fb9081F1f0A',
     usdc: '0x5425890298aed601595a70AB815c96711a31Bc65' // Test USDC
   },
 
@@ -107,7 +107,7 @@ export const CCTP_TESTNET_ADDRESSES: Record<ChainId, CCTPAddresses> = {
   80002: {
     tokenMessenger: TESTNET_TOKEN_MESSENGER,
     messageTransmitter: '0x7865fAfC2db2093669d92c0F33AeEF291086BEFD',
-    tokenMinter: '0x71a5034fFF9054BcB84c47D5E30Ec03cf9dC83E2C',
+    tokenMinter: '0xE997d7d2F6E065a9A93Fa2175E878Fb9081F1f0A',
     usdc: '0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582' // Test USDC
   }
 };
