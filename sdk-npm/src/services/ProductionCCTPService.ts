@@ -62,7 +62,7 @@ export class ProductionCCTPService {
       
       // Add timeout to prevent hanging requests during route analysis
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+      const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
       
       const response = await fetch(
         `${this.baseApiUrl}/v2/burn/USDC/fees/${fromDomain}/${toDomain}`,
@@ -78,9 +78,20 @@ export class ProductionCCTPService {
 
       if (response.ok) {
         const feeData = await response.json();
-        if (feeData.data && feeData.data.minimumFee) {
-          // Convert basis points to USDC units (6 decimals)
-          // 1 basis point = 0.01%, so minimumFee * amount / 10000
+        // Circle API returns array like: [{"finalityThreshold":1000,"minimumFee":1},{"finalityThreshold":2000,"minimumFee":0}]
+        if (Array.isArray(feeData) && feeData.length > 0) {
+          // Use the first fee tier (lowest finality threshold)
+          const firstTier = feeData[0];
+          if (firstTier && typeof firstTier.minimumFee === 'number') {
+            // Convert basis points to USDC units (6 decimals)
+            const feeInBasisPoints = firstTier.minimumFee;
+            const feeAmount = amount.mul(feeInBasisPoints).div(10000);
+            console.log(`✅ Circle API fee: ${ethers.utils.formatUnits(feeAmount, 6)} USDC for ${fromChain}→${toChain}`);
+            return feeAmount;
+          }
+        }
+        // Legacy format fallback
+        else if (feeData.data && feeData.data.minimumFee) {
           const feeInBasisPoints = feeData.data.minimumFee;
           const feeAmount = amount.mul(feeInBasisPoints).div(10000);
           console.log(`✅ Circle API fee: ${ethers.utils.formatUnits(feeAmount, 6)} USDC for ${fromChain}→${toChain}`);
@@ -112,7 +123,7 @@ export class ProductionCCTPService {
     try {
       // Check Fast Transfer allowance via Circle API with timeout
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 second timeout
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
       
       const response = await fetch(
         `${this.baseApiUrl}/v2/fastBurn/USDC/allowance`,
@@ -173,7 +184,7 @@ export class ProductionCCTPService {
       if (shouldUseFast === undefined) {
         // Add timeout protection for the fast transfer check
         const timeoutPromise = new Promise<boolean>((_, reject) => {
-          setTimeout(() => reject(new Error("Fast transfer check timeout")), 2000);
+          setTimeout(() => reject(new Error("Fast transfer check timeout")), 8000);
         });
         
         try {
