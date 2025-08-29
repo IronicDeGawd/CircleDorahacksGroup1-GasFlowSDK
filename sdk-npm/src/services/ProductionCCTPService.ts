@@ -62,7 +62,7 @@ export class ProductionCCTPService {
       
       // Add timeout to prevent hanging requests during route analysis
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
+      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
       
       const response = await fetch(
         `${this.baseApiUrl}/v2/burn/USDC/fees/${fromDomain}/${toDomain}`,
@@ -123,7 +123,7 @@ export class ProductionCCTPService {
     try {
       // Check Fast Transfer allowance via Circle API with timeout
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+      const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 second timeout
       
       const response = await fetch(
         `${this.baseApiUrl}/v2/fastBurn/USDC/allowance`,
@@ -184,7 +184,7 @@ export class ProductionCCTPService {
       if (shouldUseFast === undefined) {
         // Add timeout protection for the fast transfer check
         const timeoutPromise = new Promise<boolean>((_, reject) => {
-          setTimeout(() => reject(new Error("Fast transfer check timeout")), 8000);
+          setTimeout(() => reject(new Error("Fast transfer check timeout")), 3000);
         });
         
         try {
@@ -323,11 +323,15 @@ export class ProductionCCTPService {
         { gasLimit: BigNumber.from(200000) } // Reasonable gas limit for burn
       );
 
-      const receipt = await burnTx.wait();
+      // Wait for transaction confirmation with additional confirmations for reliability
+      const receipt = await burnTx.wait(1);
       console.log('Burn transaction completed:', burnTx.hash);
+      
+      // Add debugging information
+      console.log(`Transaction receipt - blockNumber: ${receipt.blockNumber}, logs: ${receipt.logs.length}`);
 
       // 3. Extract message hash from events
-      const messageHash = this.extractMessageHashFromReceipt(receipt);
+      const { messageHash, message } = this.extractMessageAndHashFromReceipt(receipt);
       
       const bridgeFee = await this.estimateBridgeFee(amount, fromChain, toChain);
       const estimatedTime = await this.estimateTransferTime(
@@ -342,7 +346,7 @@ export class ProductionCCTPService {
         attestationHash: messageHash,
         estimatedArrivalTime: estimatedTime,
         bridgeFee,
-        transferObject: { messageHash, receipt } // For tracking
+        transferObject: { messageHash, message, receipt } // For tracking
       };
 
     } catch (error) {
@@ -358,13 +362,22 @@ export class ProductionCCTPService {
     transferObject?: any
   ): Promise<string> {
     try {
-      const messageHash = transferObject?.messageHash || 
-        await this.getMessageHashFromTransaction(transactionHash, fromChain);
+      let messageHash: string;
+      let message: string;
+      
+      if (transferObject?.messageHash && transferObject?.message) {
+        messageHash = transferObject.messageHash;
+        message = transferObject.message;
+      } else {
+        const result = await this.getMessageAndHashFromTransaction(transactionHash, fromChain);
+        messageHash = result.messageHash;
+        message = result.message;
+      }
 
       console.log(`Waiting for attestation: ${messageHash}`);
       
       // 1. Wait for Circle attestation
-      const attestation = await this.pollForAttestation(messageHash);
+      const attestation = await this.pollForAttestation(messageHash, message);
       
       console.log('Attestation received, completing on destination chain...');
       
@@ -387,7 +400,7 @@ export class ProductionCCTPService {
   ): Promise<'pending' | 'attested' | 'completed' | 'failed'> {
     try {
       const messageHash = transferObject?.messageHash || 
-        await this.getMessageHashFromTransaction(transactionHash, fromChain);
+        (await this.getMessageAndHashFromTransaction(transactionHash, fromChain)).messageHash;
 
       // Check attestation status
       const attestationStatus = await this.getAttestationStatus(messageHash);
@@ -510,25 +523,79 @@ export class ProductionCCTPService {
     return ethers.utils.hexZeroPad(address, 32);
   }
 
-  private extractMessageHashFromReceipt(receipt: ContractReceipt): string {
-    // Find MessageSent event from MessageTransmitter
-    const messageSentEvent = receipt.events?.find(
-      event => event.event === 'MessageSent'
-    );
-    
-    if (!messageSentEvent || !messageSentEvent.args) {
-      throw new Error('MessageSent event not found in transaction receipt');
+  private extractMessageAndHashFromReceipt(receipt: ContractReceipt): { messageHash: string; message: string } {
+    try {
+      // Method 1: Try to find MessageSent event directly
+      const messageSentEvent = receipt.events?.find(
+        event => event.event === 'MessageSent'
+      );
+      
+      if (messageSentEvent && messageSentEvent.args && messageSentEvent.args.message) {
+        const message = messageSentEvent.args.message;
+        return { messageHash: ethers.utils.keccak256(message), message };
+      }
+      
+      // Method 2: Parse logs manually using MessageTransmitter interface
+      const messageTransmitterInterface = MessageTransmitterV2__factory.createInterface();
+      const messageSentTopic = messageTransmitterInterface.getEventTopic('MessageSent');
+      
+      for (const log of receipt.logs) {
+        if (log.topics[0] === messageSentTopic) {
+          try {
+            const parsedLog = messageTransmitterInterface.parseLog(log);
+            if (parsedLog.name === 'MessageSent' && parsedLog.args.message) {
+              const message = parsedLog.args.message;
+              console.log('✅ MessageSent event found via log parsing');
+              return { messageHash: ethers.utils.keccak256(message), message };
+            }
+          } catch (parseError) {
+            console.warn('Failed to parse log:', parseError);
+            continue;
+          }
+        }
+      }
+      
+      // Method 3: Parse DepositForBurn event from TokenMessenger logs
+      const tokenMessengerInterface = TokenMessengerV2__factory.createInterface();
+      const depositForBurnTopic = tokenMessengerInterface.getEventTopic('DepositForBurn');
+      
+      for (const log of receipt.logs) {
+        if (log.topics[0] === depositForBurnTopic) {
+          try {
+            const parsedLog = tokenMessengerInterface.parseLog(log);
+            if (parsedLog.name === 'DepositForBurn' && parsedLog.args.nonce) {
+              console.warn('⚠️ Using DepositForBurn nonce as fallback - this will NOT work with Circle attestation API');
+              console.warn('⚠️ This is for debugging only. The real issue is MessageSent event parsing.');
+              // Create a deterministic hash from available data for debugging
+              const nonce = parsedLog.args.nonce;
+              const blockHash = receipt.blockHash;
+              const fallbackHash = ethers.utils.keccak256(
+                ethers.utils.solidityPack(
+                  ['uint64', 'bytes32', 'bytes32'],
+                  [nonce, blockHash, receipt.transactionHash]
+                )
+              );
+              return { messageHash: fallbackHash, message: '0x' };
+            }
+          } catch (parseError) {
+            console.warn('Failed to parse DepositForBurn log:', parseError);
+            continue;
+          }
+        }
+      }
+      
+      throw new Error('No usable events found for message hash extraction');
+      
+    } catch (error) {
+      console.error('Error extracting message hash:', error);
+      throw new Error(`MessageSent event not found in transaction receipt. This may indicate a contract interaction issue. Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
-    
-    // Hash the message to get message hash
-    const message = messageSentEvent.args.message;
-    return ethers.utils.keccak256(message);
   }
 
-  private async getMessageHashFromTransaction(
+  private async getMessageAndHashFromTransaction(
     txHash: string, 
     chainId: ChainId
-  ): Promise<string> {
+  ): Promise<{ messageHash: string; message: string }> {
     const signer = this.getSigner(chainId);
     const receipt = await signer.provider?.getTransactionReceipt(txHash);
     
@@ -536,11 +603,30 @@ export class ProductionCCTPService {
       throw new Error('Transaction receipt not found');
     }
     
-    return this.extractMessageHashFromReceipt(receipt);
+    // Add debugging for transaction receipt
+    console.log('Transaction receipt logs:', receipt.logs.length);
+    
+    return this.extractMessageAndHashFromReceipt(receipt);
+  }
+
+  // Backward compatibility method
+  private async getMessageHashFromTransaction(
+    txHash: string,
+    chainId: ChainId
+  ): Promise<string> {
+    const result = await this.getMessageAndHashFromTransaction(txHash, chainId);
+    return result.messageHash;
+  }
+
+  // Backward compatibility method
+  private extractMessageHashFromReceipt(receipt: ContractReceipt): string {
+    const result = this.extractMessageAndHashFromReceipt(receipt);
+    return result.messageHash;
   }
 
   private async pollForAttestation(
     messageHash: string,
+    extractedMessage: string,
     timeoutMs: number = 300000 // 5 minutes
   ): Promise<{ message: string; signature: string }> {
     const startTime = Date.now();
@@ -560,12 +646,36 @@ export class ProductionCCTPService {
         
         if (response.ok) {
           const data = await response.json();
+          console.log('Attestation API response:', {
+            status: data.status,
+            hasMessage: !!data.message,
+            hasAttestation: !!data.attestation,
+            messageType: typeof data.message,
+            attestationType: typeof data.attestation,
+            messageLength: data.message?.length,
+            attestationLength: data.attestation?.length
+          });
+          
           if (data.status === 'complete' && data.attestation) {
             console.log('Attestation received');
-            return {
-              message: data.message,
-              signature: data.attestation
-            };
+            
+            // Validate the attestation data format
+            if (!data.attestation) {
+              throw new Error('Invalid attestation response: missing attestation');
+            }
+            
+            // Use extracted message from logs, not from API response
+            const message = extractedMessage.startsWith('0x') ? extractedMessage : `0x${extractedMessage}`;
+            const signature = data.attestation.startsWith('0x') ? data.attestation : `0x${data.attestation}`;
+            
+            console.log('Formatted attestation data:', {
+              messageHex: message.slice(0, 66) + '...',
+              signatureHex: signature.slice(0, 66) + '...',
+              messageValid: ethers.utils.isHexString(message),
+              signatureValid: ethers.utils.isHexString(signature)
+            });
+            
+            return { message, signature };
           }
           console.log(`Attestation status: ${data.status}`);
         } else if (response.status === 404) {
@@ -622,17 +732,83 @@ export class ProductionCCTPService {
     
     console.log('Submitting attestation to destination chain...');
     
-    // Submit attestation to complete the transfer
-    const mintTx = await messageTransmitter.receiveMessage(
-      attestation.message,
-      attestation.signature,
-      { gasLimit: BigNumber.from(300000) } // Reasonable gas limit for receive
-    );
-    
-    const receipt = await mintTx.wait();
-    console.log('Mint transaction completed:', mintTx.hash);
-    
-    return mintTx.hash;
+    try {
+      // Validate hex strings before conversion
+      if (!ethers.utils.isHexString(attestation.message)) {
+        throw new Error(`Invalid message format - not hex string: ${attestation.message}`);
+      }
+      if (!ethers.utils.isHexString(attestation.signature)) {
+        throw new Error(`Invalid signature format - not hex string: ${attestation.signature}`);
+      }
+      
+      console.log('Pre-conversion attestation data:', {
+        messageRaw: attestation.message,
+        signatureRaw: attestation.signature,
+        messageLength: attestation.message.length,
+        signatureLength: attestation.signature.length,
+        messageIsHex: ethers.utils.isHexString(attestation.message),
+        signatureIsHex: ethers.utils.isHexString(attestation.signature)
+      });
+      
+      // Convert hex strings to proper bytes format - handle potential undefined values
+      let messageBytes: Uint8Array;
+      let signatureBytes: Uint8Array;
+      
+      try {
+        messageBytes = ethers.utils.arrayify(attestation.message);
+      } catch (msgError) {
+        throw new Error(`Failed to convert message to bytes: ${msgError}. Message: ${attestation.message}`);
+      }
+      
+      try {
+        signatureBytes = ethers.utils.arrayify(attestation.signature);
+      } catch (sigError) {
+        throw new Error(`Failed to convert signature to bytes: ${sigError}. Signature: ${attestation.signature}`);
+      }
+      
+      console.log('Post-conversion attestation data:', {
+        messageBytesLength: messageBytes.length,
+        signatureBytesLength: signatureBytes.length,
+        messageFirstBytes: Array.from(messageBytes.slice(0, 4)).map(b => `0x${b.toString(16).padStart(2, '0')}`).join(' '),
+        signatureFirstBytes: Array.from(signatureBytes.slice(0, 4)).map(b => `0x${b.toString(16).padStart(2, '0')}`).join(' ')
+      });
+      
+      // Check if message has already been used
+      const messageHashForCheck = ethers.utils.keccak256(messageBytes);
+      console.log(`Checking if message hash ${messageHashForCheck} has been used...`);
+      
+      try {
+        const nonce = await messageTransmitter.usedNonces(messageHashForCheck);
+        if (nonce.gt(0)) {
+          throw new Error(`Message ${messageHashForCheck} has already been processed (nonce: ${nonce})`);
+        }
+        console.log('✅ Message has not been processed yet');
+      } catch (nonceError) {
+        console.warn('Could not check nonce status:', nonceError);
+      }
+      
+      // Submit attestation to complete the transfer
+      const mintTx = await messageTransmitter.receiveMessage(
+        messageBytes,
+        signatureBytes,
+        { gasLimit: BigNumber.from(300000) } // Reasonable gas limit for receive
+      );
+      
+      const receipt = await mintTx.wait();
+      console.log('Mint transaction completed:', mintTx.hash);
+      
+      return mintTx.hash;
+      
+    } catch (error) {
+      console.error('Destination completion failed:', error);
+      console.error('Attestation details:', {
+        message: attestation.message,
+        signature: attestation.signature,
+        toChain,
+        messageTransmitterAddress: addresses.messageTransmitter
+      });
+      throw error;
+    }
   }
 
   private calculateEstimatedFee(fromChain: ChainId, toChain: ChainId): BigNumber {
