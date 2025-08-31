@@ -2,6 +2,8 @@ import { BigNumber } from 'ethers';
 
 export type ChainId = number;
 
+export type ExecutionMode = 'paymaster' | 'traditional' | 'auto';
+
 export interface GasFlowConfig {
   apiKey: string;
   supportedChains: ChainId[];
@@ -15,8 +17,11 @@ export interface GasFlowConfig {
   webhookUrl?: string;
   analytics?: boolean;
   
+  // Execution Configuration
+  executionMode?: ExecutionMode;
+  preferSignerExecution?: boolean;
+  
   // CCTP Configuration
-  useProductionCCTP?: boolean;
   signers?: Map<ChainId, any>; // ethers.Signer instances
   
   // Alchemy Bundler Configuration
@@ -104,6 +109,12 @@ export interface CCTPTransferParams {
   recipient: string;
   useFastTransfer?: boolean;
   signer?: any; // Ethers signer for transaction signing
+  
+  // CCTP V2 optional parameters
+  destinationCaller?: string;    // Default: zero address (no restriction)
+  maxFee?: BigNumber;           // Default: calculated from bridge fee with buffer
+  minFinalityThreshold?: number; // Default: 2000 (Standard) or 1000 (Fast based on useFastTransfer)
+  hookData?: string;            // Default: '0x' (empty bytes)
 }
 
 export interface CCTPTransferResult {
@@ -111,7 +122,7 @@ export interface CCTPTransferResult {
   attestationHash?: string;
   estimatedArrivalTime: number;
   bridgeFee: BigNumber;
-  transferObject?: any; // Wormhole transfer object for tracking
+  transferObject?: any; // Transfer object for tracking
 }
 
 export interface PaymasterUserOperation {

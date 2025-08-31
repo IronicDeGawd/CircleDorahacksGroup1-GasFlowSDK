@@ -28,93 +28,379 @@ import type {
 
 export interface MessageTransmitterV2Interface extends utils.Interface {
   functions: {
-    "receiveMessage(bytes,bytes)": FunctionFragment;
-    "replaceMessage(bytes,bytes)": FunctionFragment;
-    "sendMessage(uint32,bytes32,bytes)": FunctionFragment;
-    "sendMessageWithCaller(uint32,bytes32,bytes32,bytes)": FunctionFragment;
-    "usedNonces(bytes32)": FunctionFragment;
+    "NONCE_USED()": FunctionFragment;
+    "acceptOwnership()": FunctionFragment;
+    "attesterManager()": FunctionFragment;
+    "disableAttester(address)": FunctionFragment;
+    "enableAttester(address)": FunctionFragment;
+    "getEnabledAttester(uint256)": FunctionFragment;
+    "getNumEnabledAttesters()": FunctionFragment;
+    "initialize(address,address,address,address,address[],uint256,uint256)": FunctionFragment;
+    "initializedVersion()": FunctionFragment;
+    "isEnabledAttester(address)": FunctionFragment;
     "localDomain()": FunctionFragment;
+    "maxMessageBodySize()": FunctionFragment;
+    "owner()": FunctionFragment;
+    "pause()": FunctionFragment;
+    "paused()": FunctionFragment;
+    "pauser()": FunctionFragment;
+    "pendingOwner()": FunctionFragment;
+    "receiveMessage(bytes,bytes)": FunctionFragment;
+    "rescueERC20(address,address,uint256)": FunctionFragment;
+    "rescuer()": FunctionFragment;
+    "sendMessage(uint32,bytes32,bytes32,uint32,bytes)": FunctionFragment;
+    "setMaxMessageBodySize(uint256)": FunctionFragment;
+    "setSignatureThreshold(uint256)": FunctionFragment;
+    "signatureThreshold()": FunctionFragment;
+    "transferOwnership(address)": FunctionFragment;
+    "unpause()": FunctionFragment;
+    "updateAttesterManager(address)": FunctionFragment;
+    "updatePauser(address)": FunctionFragment;
+    "updateRescuer(address)": FunctionFragment;
+    "usedNonces(bytes32)": FunctionFragment;
     "version()": FunctionFragment;
-    "attestationManager(bytes,bytes)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "receiveMessage"
-      | "replaceMessage"
-      | "sendMessage"
-      | "sendMessageWithCaller"
-      | "usedNonces"
+      | "NONCE_USED"
+      | "acceptOwnership"
+      | "attesterManager"
+      | "disableAttester"
+      | "enableAttester"
+      | "getEnabledAttester"
+      | "getNumEnabledAttesters"
+      | "initialize"
+      | "initializedVersion"
+      | "isEnabledAttester"
       | "localDomain"
+      | "maxMessageBodySize"
+      | "owner"
+      | "pause"
+      | "paused"
+      | "pauser"
+      | "pendingOwner"
+      | "receiveMessage"
+      | "rescueERC20"
+      | "rescuer"
+      | "sendMessage"
+      | "setMaxMessageBodySize"
+      | "setSignatureThreshold"
+      | "signatureThreshold"
+      | "transferOwnership"
+      | "unpause"
+      | "updateAttesterManager"
+      | "updatePauser"
+      | "updateRescuer"
+      | "usedNonces"
       | "version"
-      | "attestationManager"
   ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "receiveMessage",
-    values: [BytesLike, BytesLike]
+    functionFragment: "NONCE_USED",
+    values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "replaceMessage",
-    values: [BytesLike, BytesLike]
+    functionFragment: "acceptOwnership",
+    values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "sendMessage",
-    values: [BigNumberish, BytesLike, BytesLike]
+    functionFragment: "attesterManager",
+    values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "sendMessageWithCaller",
-    values: [BigNumberish, BytesLike, BytesLike, BytesLike]
+    functionFragment: "disableAttester",
+    values: [string]
   ): string;
   encodeFunctionData(
-    functionFragment: "usedNonces",
-    values: [BytesLike]
+    functionFragment: "enableAttester",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getEnabledAttester",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getNumEnabledAttesters",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "initialize",
+    values: [
+      string,
+      string,
+      string,
+      string,
+      string[],
+      BigNumberish,
+      BigNumberish
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "initializedVersion",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "isEnabledAttester",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "localDomain",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "version", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "attestationManager",
+    functionFragment: "maxMessageBodySize",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(functionFragment: "pause", values?: undefined): string;
+  encodeFunctionData(functionFragment: "paused", values?: undefined): string;
+  encodeFunctionData(functionFragment: "pauser", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "pendingOwner",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "receiveMessage",
     values: [BytesLike, BytesLike]
   ): string;
+  encodeFunctionData(
+    functionFragment: "rescueERC20",
+    values: [string, string, BigNumberish]
+  ): string;
+  encodeFunctionData(functionFragment: "rescuer", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "sendMessage",
+    values: [BigNumberish, BytesLike, BytesLike, BigNumberish, BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setMaxMessageBodySize",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setSignatureThreshold",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "signatureThreshold",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "transferOwnership",
+    values: [string]
+  ): string;
+  encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "updateAttesterManager",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "updatePauser",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "updateRescuer",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "usedNonces",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(functionFragment: "version", values?: undefined): string;
 
+  decodeFunctionResult(functionFragment: "NONCE_USED", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "acceptOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "attesterManager",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "disableAttester",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "enableAttester",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getEnabledAttester",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getNumEnabledAttesters",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "initializedVersion",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "isEnabledAttester",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "localDomain",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "maxMessageBodySize",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "pauser", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "pendingOwner",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "receiveMessage",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "replaceMessage",
+    functionFragment: "rescueERC20",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "rescuer", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "sendMessage",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "sendMessageWithCaller",
+    functionFragment: "setMaxMessageBodySize",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setSignatureThreshold",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "signatureThreshold",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "transferOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "updateAttesterManager",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updatePauser",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updateRescuer",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "usedNonces", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "localDomain",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "version", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "attestationManager",
-    data: BytesLike
-  ): Result;
 
   events: {
+    "AttesterDisabled(address)": EventFragment;
+    "AttesterEnabled(address)": EventFragment;
+    "AttesterManagerUpdated(address,address)": EventFragment;
+    "Initialized(uint64)": EventFragment;
+    "MaxMessageBodySizeUpdated(uint256)": EventFragment;
+    "MessageReceived(address,uint32,bytes32,bytes32,uint32,bytes)": EventFragment;
     "MessageSent(bytes)": EventFragment;
-    "MessageReceived(address,uint32,uint64,bytes32,bytes)": EventFragment;
+    "OwnershipTransferStarted(address,address)": EventFragment;
+    "OwnershipTransferred(address,address)": EventFragment;
+    "Pause()": EventFragment;
+    "PauserChanged(address)": EventFragment;
+    "RescuerChanged(address)": EventFragment;
+    "SignatureThresholdUpdated(uint256,uint256)": EventFragment;
+    "Unpause()": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "MessageSent"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "AttesterDisabled"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "AttesterEnabled"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "AttesterManagerUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "MaxMessageBodySizeUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MessageReceived"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "MessageSent"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OwnershipTransferStarted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Pause"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PauserChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RescuerChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SignatureThresholdUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Unpause"): EventFragment;
 }
+
+export interface AttesterDisabledEventObject {
+  attester: string;
+}
+export type AttesterDisabledEvent = TypedEvent<
+  [string],
+  AttesterDisabledEventObject
+>;
+
+export type AttesterDisabledEventFilter =
+  TypedEventFilter<AttesterDisabledEvent>;
+
+export interface AttesterEnabledEventObject {
+  attester: string;
+}
+export type AttesterEnabledEvent = TypedEvent<
+  [string],
+  AttesterEnabledEventObject
+>;
+
+export type AttesterEnabledEventFilter = TypedEventFilter<AttesterEnabledEvent>;
+
+export interface AttesterManagerUpdatedEventObject {
+  previousAttesterManager: string;
+  newAttesterManager: string;
+}
+export type AttesterManagerUpdatedEvent = TypedEvent<
+  [string, string],
+  AttesterManagerUpdatedEventObject
+>;
+
+export type AttesterManagerUpdatedEventFilter =
+  TypedEventFilter<AttesterManagerUpdatedEvent>;
+
+export interface InitializedEventObject {
+  version: BigNumber;
+}
+export type InitializedEvent = TypedEvent<[BigNumber], InitializedEventObject>;
+
+export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
+
+export interface MaxMessageBodySizeUpdatedEventObject {
+  newMaxMessageBodySize: BigNumber;
+}
+export type MaxMessageBodySizeUpdatedEvent = TypedEvent<
+  [BigNumber],
+  MaxMessageBodySizeUpdatedEventObject
+>;
+
+export type MaxMessageBodySizeUpdatedEventFilter =
+  TypedEventFilter<MaxMessageBodySizeUpdatedEvent>;
+
+export interface MessageReceivedEventObject {
+  caller: string;
+  sourceDomain: number;
+  nonce: string;
+  sender: string;
+  finalityThresholdExecuted: number;
+  messageBody: string;
+}
+export type MessageReceivedEvent = TypedEvent<
+  [string, number, string, string, number, string],
+  MessageReceivedEventObject
+>;
+
+export type MessageReceivedEventFilter = TypedEventFilter<MessageReceivedEvent>;
 
 export interface MessageSentEventObject {
   message: string;
@@ -123,19 +409,68 @@ export type MessageSentEvent = TypedEvent<[string], MessageSentEventObject>;
 
 export type MessageSentEventFilter = TypedEventFilter<MessageSentEvent>;
 
-export interface MessageReceivedEventObject {
-  caller: string;
-  sourceDomain: number;
-  nonce: BigNumber;
-  sender: string;
-  messageBody: string;
+export interface OwnershipTransferStartedEventObject {
+  previousOwner: string;
+  newOwner: string;
 }
-export type MessageReceivedEvent = TypedEvent<
-  [string, number, BigNumber, string, string],
-  MessageReceivedEventObject
+export type OwnershipTransferStartedEvent = TypedEvent<
+  [string, string],
+  OwnershipTransferStartedEventObject
 >;
 
-export type MessageReceivedEventFilter = TypedEventFilter<MessageReceivedEvent>;
+export type OwnershipTransferStartedEventFilter =
+  TypedEventFilter<OwnershipTransferStartedEvent>;
+
+export interface OwnershipTransferredEventObject {
+  previousOwner: string;
+  newOwner: string;
+}
+export type OwnershipTransferredEvent = TypedEvent<
+  [string, string],
+  OwnershipTransferredEventObject
+>;
+
+export type OwnershipTransferredEventFilter =
+  TypedEventFilter<OwnershipTransferredEvent>;
+
+export interface PauseEventObject {}
+export type PauseEvent = TypedEvent<[], PauseEventObject>;
+
+export type PauseEventFilter = TypedEventFilter<PauseEvent>;
+
+export interface PauserChangedEventObject {
+  newAddress: string;
+}
+export type PauserChangedEvent = TypedEvent<[string], PauserChangedEventObject>;
+
+export type PauserChangedEventFilter = TypedEventFilter<PauserChangedEvent>;
+
+export interface RescuerChangedEventObject {
+  newRescuer: string;
+}
+export type RescuerChangedEvent = TypedEvent<
+  [string],
+  RescuerChangedEventObject
+>;
+
+export type RescuerChangedEventFilter = TypedEventFilter<RescuerChangedEvent>;
+
+export interface SignatureThresholdUpdatedEventObject {
+  oldSignatureThreshold: BigNumber;
+  newSignatureThreshold: BigNumber;
+}
+export type SignatureThresholdUpdatedEvent = TypedEvent<
+  [BigNumber, BigNumber],
+  SignatureThresholdUpdatedEventObject
+>;
+
+export type SignatureThresholdUpdatedEventFilter =
+  TypedEventFilter<SignatureThresholdUpdatedEvent>;
+
+export interface UnpauseEventObject {}
+export type UnpauseEvent = TypedEvent<[], UnpauseEventObject>;
+
+export type UnpauseEventFilter = TypedEventFilter<UnpauseEvent>;
 
 export interface MessageTransmitterV2 extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -164,240 +499,714 @@ export interface MessageTransmitterV2 extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    receiveMessage(
-      _message: BytesLike,
-      _attestation: BytesLike,
+    NONCE_USED(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    acceptOwnership(
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
-    replaceMessage(
-      _message: BytesLike,
-      _attestation: BytesLike,
+    attesterManager(overrides?: CallOverrides): Promise<[string]>;
+
+    disableAttester(
+      attester: string,
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
-    sendMessage(
-      _destinationDomain: BigNumberish,
-      _recipient: BytesLike,
-      _messageBody: BytesLike,
+    enableAttester(
+      newAttester: string,
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
-    sendMessageWithCaller(
-      _destinationDomain: BigNumberish,
-      _recipient: BytesLike,
-      _destinationCaller: BytesLike,
-      _messageBody: BytesLike,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    usedNonces(
-      _messageHash: BytesLike,
+    getEnabledAttester(
+      index: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<[string]>;
+
+    getNumEnabledAttesters(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    initialize(
+      owner_: string,
+      pauser_: string,
+      rescuer_: string,
+      attesterManager_: string,
+      attesters_: string[],
+      signatureThreshold_: BigNumberish,
+      maxMessageBodySize_: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    initializedVersion(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    isEnabledAttester(
+      attester: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     localDomain(overrides?: CallOverrides): Promise<[number]>;
 
-    version(overrides?: CallOverrides): Promise<[number]>;
+    maxMessageBodySize(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    attestationManager(
-      _message: BytesLike,
-      _signature: BytesLike,
+    owner(overrides?: CallOverrides): Promise<[string]>;
+
+    pause(
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    paused(overrides?: CallOverrides): Promise<[boolean]>;
+
+    pauser(overrides?: CallOverrides): Promise<[string]>;
+
+    pendingOwner(overrides?: CallOverrides): Promise<[string]>;
+
+    receiveMessage(
+      message: BytesLike,
+      attestation: BytesLike,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    rescueERC20(
+      tokenContract: string,
+      to: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    rescuer(overrides?: CallOverrides): Promise<[string]>;
+
+    sendMessage(
+      destinationDomain: BigNumberish,
+      recipient: BytesLike,
+      destinationCaller: BytesLike,
+      minFinalityThreshold: BigNumberish,
+      messageBody: BytesLike,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    setMaxMessageBodySize(
+      newMaxMessageBodySize: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    setSignatureThreshold(
+      newSignatureThreshold: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    signatureThreshold(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    transferOwnership(
+      newOwner: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    unpause(
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    updateAttesterManager(
+      newAttesterManager: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    updatePauser(
+      _newPauser: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    updateRescuer(
+      newRescuer: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    usedNonces(
+      arg0: BytesLike,
       overrides?: CallOverrides
-    ): Promise<[boolean]>;
+    ): Promise<[BigNumber]>;
+
+    version(overrides?: CallOverrides): Promise<[number]>;
   };
 
-  receiveMessage(
-    _message: BytesLike,
-    _attestation: BytesLike,
+  NONCE_USED(overrides?: CallOverrides): Promise<BigNumber>;
+
+  acceptOwnership(
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
-  replaceMessage(
-    _message: BytesLike,
-    _attestation: BytesLike,
+  attesterManager(overrides?: CallOverrides): Promise<string>;
+
+  disableAttester(
+    attester: string,
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
-  sendMessage(
-    _destinationDomain: BigNumberish,
-    _recipient: BytesLike,
-    _messageBody: BytesLike,
+  enableAttester(
+    newAttester: string,
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
-  sendMessageWithCaller(
-    _destinationDomain: BigNumberish,
-    _recipient: BytesLike,
-    _destinationCaller: BytesLike,
-    _messageBody: BytesLike,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  usedNonces(
-    _messageHash: BytesLike,
+  getEnabledAttester(
+    index: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  ): Promise<string>;
 
-  localDomain(overrides?: CallOverrides): Promise<number>;
+  getNumEnabledAttesters(overrides?: CallOverrides): Promise<BigNumber>;
 
-  version(overrides?: CallOverrides): Promise<number>;
+  initialize(
+    owner_: string,
+    pauser_: string,
+    rescuer_: string,
+    attesterManager_: string,
+    attesters_: string[],
+    signatureThreshold_: BigNumberish,
+    maxMessageBodySize_: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
 
-  attestationManager(
-    _message: BytesLike,
-    _signature: BytesLike,
+  initializedVersion(overrides?: CallOverrides): Promise<BigNumber>;
+
+  isEnabledAttester(
+    attester: string,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  localDomain(overrides?: CallOverrides): Promise<number>;
+
+  maxMessageBodySize(overrides?: CallOverrides): Promise<BigNumber>;
+
+  owner(overrides?: CallOverrides): Promise<string>;
+
+  pause(
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  paused(overrides?: CallOverrides): Promise<boolean>;
+
+  pauser(overrides?: CallOverrides): Promise<string>;
+
+  pendingOwner(overrides?: CallOverrides): Promise<string>;
+
+  receiveMessage(
+    message: BytesLike,
+    attestation: BytesLike,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  rescueERC20(
+    tokenContract: string,
+    to: string,
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  rescuer(overrides?: CallOverrides): Promise<string>;
+
+  sendMessage(
+    destinationDomain: BigNumberish,
+    recipient: BytesLike,
+    destinationCaller: BytesLike,
+    minFinalityThreshold: BigNumberish,
+    messageBody: BytesLike,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  setMaxMessageBodySize(
+    newMaxMessageBodySize: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  setSignatureThreshold(
+    newSignatureThreshold: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  signatureThreshold(overrides?: CallOverrides): Promise<BigNumber>;
+
+  transferOwnership(
+    newOwner: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  unpause(
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  updateAttesterManager(
+    newAttesterManager: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  updatePauser(
+    _newPauser: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  updateRescuer(
+    newRescuer: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  usedNonces(arg0: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
+
+  version(overrides?: CallOverrides): Promise<number>;
+
   callStatic: {
-    receiveMessage(
-      _message: BytesLike,
-      _attestation: BytesLike,
+    NONCE_USED(overrides?: CallOverrides): Promise<BigNumber>;
+
+    acceptOwnership(overrides?: CallOverrides): Promise<void>;
+
+    attesterManager(overrides?: CallOverrides): Promise<string>;
+
+    disableAttester(attester: string, overrides?: CallOverrides): Promise<void>;
+
+    enableAttester(
+      newAttester: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    getEnabledAttester(
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    getNumEnabledAttesters(overrides?: CallOverrides): Promise<BigNumber>;
+
+    initialize(
+      owner_: string,
+      pauser_: string,
+      rescuer_: string,
+      attesterManager_: string,
+      attesters_: string[],
+      signatureThreshold_: BigNumberish,
+      maxMessageBodySize_: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    initializedVersion(overrides?: CallOverrides): Promise<BigNumber>;
+
+    isEnabledAttester(
+      attester: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
-
-    replaceMessage(
-      _message: BytesLike,
-      _attestation: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    sendMessage(
-      _destinationDomain: BigNumberish,
-      _recipient: BytesLike,
-      _messageBody: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    sendMessageWithCaller(
-      _destinationDomain: BigNumberish,
-      _recipient: BytesLike,
-      _destinationCaller: BytesLike,
-      _messageBody: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    usedNonces(
-      _messageHash: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     localDomain(overrides?: CallOverrides): Promise<number>;
 
-    version(overrides?: CallOverrides): Promise<number>;
+    maxMessageBodySize(overrides?: CallOverrides): Promise<BigNumber>;
 
-    attestationManager(
-      _message: BytesLike,
-      _signature: BytesLike,
+    owner(overrides?: CallOverrides): Promise<string>;
+
+    pause(overrides?: CallOverrides): Promise<void>;
+
+    paused(overrides?: CallOverrides): Promise<boolean>;
+
+    pauser(overrides?: CallOverrides): Promise<string>;
+
+    pendingOwner(overrides?: CallOverrides): Promise<string>;
+
+    receiveMessage(
+      message: BytesLike,
+      attestation: BytesLike,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    rescueERC20(
+      tokenContract: string,
+      to: string,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    rescuer(overrides?: CallOverrides): Promise<string>;
+
+    sendMessage(
+      destinationDomain: BigNumberish,
+      recipient: BytesLike,
+      destinationCaller: BytesLike,
+      minFinalityThreshold: BigNumberish,
+      messageBody: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setMaxMessageBodySize(
+      newMaxMessageBodySize: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setSignatureThreshold(
+      newSignatureThreshold: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    signatureThreshold(overrides?: CallOverrides): Promise<BigNumber>;
+
+    transferOwnership(
+      newOwner: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    unpause(overrides?: CallOverrides): Promise<void>;
+
+    updateAttesterManager(
+      newAttesterManager: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    updatePauser(_newPauser: string, overrides?: CallOverrides): Promise<void>;
+
+    updateRescuer(newRescuer: string, overrides?: CallOverrides): Promise<void>;
+
+    usedNonces(arg0: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
+
+    version(overrides?: CallOverrides): Promise<number>;
   };
 
   filters: {
-    "MessageSent(bytes)"(message?: null): MessageSentEventFilter;
-    MessageSent(message?: null): MessageSentEventFilter;
+    "AttesterDisabled(address)"(
+      attester?: string | null
+    ): AttesterDisabledEventFilter;
+    AttesterDisabled(attester?: string | null): AttesterDisabledEventFilter;
 
-    "MessageReceived(address,uint32,uint64,bytes32,bytes)"(
+    "AttesterEnabled(address)"(
+      attester?: string | null
+    ): AttesterEnabledEventFilter;
+    AttesterEnabled(attester?: string | null): AttesterEnabledEventFilter;
+
+    "AttesterManagerUpdated(address,address)"(
+      previousAttesterManager?: string | null,
+      newAttesterManager?: string | null
+    ): AttesterManagerUpdatedEventFilter;
+    AttesterManagerUpdated(
+      previousAttesterManager?: string | null,
+      newAttesterManager?: string | null
+    ): AttesterManagerUpdatedEventFilter;
+
+    "Initialized(uint64)"(version?: null): InitializedEventFilter;
+    Initialized(version?: null): InitializedEventFilter;
+
+    "MaxMessageBodySizeUpdated(uint256)"(
+      newMaxMessageBodySize?: null
+    ): MaxMessageBodySizeUpdatedEventFilter;
+    MaxMessageBodySizeUpdated(
+      newMaxMessageBodySize?: null
+    ): MaxMessageBodySizeUpdatedEventFilter;
+
+    "MessageReceived(address,uint32,bytes32,bytes32,uint32,bytes)"(
       caller?: string | null,
       sourceDomain?: null,
-      nonce?: BigNumberish | null,
+      nonce?: BytesLike | null,
       sender?: null,
+      finalityThresholdExecuted?: BigNumberish | null,
       messageBody?: null
     ): MessageReceivedEventFilter;
     MessageReceived(
       caller?: string | null,
       sourceDomain?: null,
-      nonce?: BigNumberish | null,
+      nonce?: BytesLike | null,
       sender?: null,
+      finalityThresholdExecuted?: BigNumberish | null,
       messageBody?: null
     ): MessageReceivedEventFilter;
+
+    "MessageSent(bytes)"(message?: null): MessageSentEventFilter;
+    MessageSent(message?: null): MessageSentEventFilter;
+
+    "OwnershipTransferStarted(address,address)"(
+      previousOwner?: string | null,
+      newOwner?: string | null
+    ): OwnershipTransferStartedEventFilter;
+    OwnershipTransferStarted(
+      previousOwner?: string | null,
+      newOwner?: string | null
+    ): OwnershipTransferStartedEventFilter;
+
+    "OwnershipTransferred(address,address)"(
+      previousOwner?: string | null,
+      newOwner?: string | null
+    ): OwnershipTransferredEventFilter;
+    OwnershipTransferred(
+      previousOwner?: string | null,
+      newOwner?: string | null
+    ): OwnershipTransferredEventFilter;
+
+    "Pause()"(): PauseEventFilter;
+    Pause(): PauseEventFilter;
+
+    "PauserChanged(address)"(
+      newAddress?: string | null
+    ): PauserChangedEventFilter;
+    PauserChanged(newAddress?: string | null): PauserChangedEventFilter;
+
+    "RescuerChanged(address)"(
+      newRescuer?: string | null
+    ): RescuerChangedEventFilter;
+    RescuerChanged(newRescuer?: string | null): RescuerChangedEventFilter;
+
+    "SignatureThresholdUpdated(uint256,uint256)"(
+      oldSignatureThreshold?: null,
+      newSignatureThreshold?: null
+    ): SignatureThresholdUpdatedEventFilter;
+    SignatureThresholdUpdated(
+      oldSignatureThreshold?: null,
+      newSignatureThreshold?: null
+    ): SignatureThresholdUpdatedEventFilter;
+
+    "Unpause()"(): UnpauseEventFilter;
+    Unpause(): UnpauseEventFilter;
   };
 
   estimateGas: {
-    receiveMessage(
-      _message: BytesLike,
-      _attestation: BytesLike,
+    NONCE_USED(overrides?: CallOverrides): Promise<BigNumber>;
+
+    acceptOwnership(
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
-    replaceMessage(
-      _message: BytesLike,
-      _attestation: BytesLike,
+    attesterManager(overrides?: CallOverrides): Promise<BigNumber>;
+
+    disableAttester(
+      attester: string,
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
-    sendMessage(
-      _destinationDomain: BigNumberish,
-      _recipient: BytesLike,
-      _messageBody: BytesLike,
+    enableAttester(
+      newAttester: string,
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
-    sendMessageWithCaller(
-      _destinationDomain: BigNumberish,
-      _recipient: BytesLike,
-      _destinationCaller: BytesLike,
-      _messageBody: BytesLike,
+    getEnabledAttester(
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getNumEnabledAttesters(overrides?: CallOverrides): Promise<BigNumber>;
+
+    initialize(
+      owner_: string,
+      pauser_: string,
+      rescuer_: string,
+      attesterManager_: string,
+      attesters_: string[],
+      signatureThreshold_: BigNumberish,
+      maxMessageBodySize_: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
-    usedNonces(
-      _messageHash: BytesLike,
+    initializedVersion(overrides?: CallOverrides): Promise<BigNumber>;
+
+    isEnabledAttester(
+      attester: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     localDomain(overrides?: CallOverrides): Promise<BigNumber>;
 
-    version(overrides?: CallOverrides): Promise<BigNumber>;
+    maxMessageBodySize(overrides?: CallOverrides): Promise<BigNumber>;
 
-    attestationManager(
-      _message: BytesLike,
-      _signature: BytesLike,
-      overrides?: CallOverrides
+    owner(overrides?: CallOverrides): Promise<BigNumber>;
+
+    pause(overrides?: Overrides & { from?: string }): Promise<BigNumber>;
+
+    paused(overrides?: CallOverrides): Promise<BigNumber>;
+
+    pauser(overrides?: CallOverrides): Promise<BigNumber>;
+
+    pendingOwner(overrides?: CallOverrides): Promise<BigNumber>;
+
+    receiveMessage(
+      message: BytesLike,
+      attestation: BytesLike,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
+
+    rescueERC20(
+      tokenContract: string,
+      to: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    rescuer(overrides?: CallOverrides): Promise<BigNumber>;
+
+    sendMessage(
+      destinationDomain: BigNumberish,
+      recipient: BytesLike,
+      destinationCaller: BytesLike,
+      minFinalityThreshold: BigNumberish,
+      messageBody: BytesLike,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    setMaxMessageBodySize(
+      newMaxMessageBodySize: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    setSignatureThreshold(
+      newSignatureThreshold: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    signatureThreshold(overrides?: CallOverrides): Promise<BigNumber>;
+
+    transferOwnership(
+      newOwner: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    unpause(overrides?: Overrides & { from?: string }): Promise<BigNumber>;
+
+    updateAttesterManager(
+      newAttesterManager: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    updatePauser(
+      _newPauser: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    updateRescuer(
+      newRescuer: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    usedNonces(arg0: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
+
+    version(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    receiveMessage(
-      _message: BytesLike,
-      _attestation: BytesLike,
+    NONCE_USED(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    acceptOwnership(
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
-    replaceMessage(
-      _message: BytesLike,
-      _attestation: BytesLike,
+    attesterManager(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    disableAttester(
+      attester: string,
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
-    sendMessage(
-      _destinationDomain: BigNumberish,
-      _recipient: BytesLike,
-      _messageBody: BytesLike,
+    enableAttester(
+      newAttester: string,
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
-    sendMessageWithCaller(
-      _destinationDomain: BigNumberish,
-      _recipient: BytesLike,
-      _destinationCaller: BytesLike,
-      _messageBody: BytesLike,
+    getEnabledAttester(
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getNumEnabledAttesters(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    initialize(
+      owner_: string,
+      pauser_: string,
+      rescuer_: string,
+      attesterManager_: string,
+      attesters_: string[],
+      signatureThreshold_: BigNumberish,
+      maxMessageBodySize_: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
-    usedNonces(
-      _messageHash: BytesLike,
+    initializedVersion(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    isEnabledAttester(
+      attester: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     localDomain(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    version(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    attestationManager(
-      _message: BytesLike,
-      _signature: BytesLike,
+    maxMessageBodySize(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    pause(
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    pauser(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    pendingOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    receiveMessage(
+      message: BytesLike,
+      attestation: BytesLike,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    rescueERC20(
+      tokenContract: string,
+      to: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    rescuer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    sendMessage(
+      destinationDomain: BigNumberish,
+      recipient: BytesLike,
+      destinationCaller: BytesLike,
+      minFinalityThreshold: BigNumberish,
+      messageBody: BytesLike,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    setMaxMessageBodySize(
+      newMaxMessageBodySize: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    setSignatureThreshold(
+      newSignatureThreshold: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    signatureThreshold(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    transferOwnership(
+      newOwner: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    unpause(
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    updateAttesterManager(
+      newAttesterManager: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    updatePauser(
+      _newPauser: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    updateRescuer(
+      newRescuer: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    usedNonces(
+      arg0: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    version(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

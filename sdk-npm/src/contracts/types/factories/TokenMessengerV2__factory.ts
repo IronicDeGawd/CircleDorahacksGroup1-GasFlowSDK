@@ -11,294 +11,820 @@ import type {
 
 const _abi = [
   {
+    type: "constructor",
     inputs: [
       {
-        internalType: "uint256",
-        name: "_amount",
-        type: "uint256",
-      },
-      {
-        internalType: "uint32",
-        name: "_destinationDomain",
-        type: "uint32",
-      },
-      {
-        internalType: "bytes32",
-        name: "_mintRecipient",
-        type: "bytes32",
-      },
-      {
-        internalType: "address",
-        name: "_burnToken",
+        name: "_messageTransmitter",
         type: "address",
+        internalType: "address",
+      },
+      {
+        name: "_messageBodyVersion",
+        type: "uint32",
+        internalType: "uint32",
       },
     ],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "acceptOwnership",
+    inputs: [],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "addLocalMinter",
+    inputs: [
+      {
+        name: "newLocalMinter",
+        type: "address",
+        internalType: "address",
+      },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "addRemoteTokenMessenger",
+    inputs: [
+      {
+        name: "domain",
+        type: "uint32",
+        internalType: "uint32",
+      },
+      {
+        name: "tokenMessenger",
+        type: "bytes32",
+        internalType: "bytes32",
+      },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "denylist",
+    inputs: [
+      {
+        name: "account",
+        type: "address",
+        internalType: "address",
+      },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "denylister",
+    inputs: [],
+    outputs: [
+      {
+        name: "",
+        type: "address",
+        internalType: "address",
+      },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
     name: "depositForBurn",
-    outputs: [
-      {
-        internalType: "uint64",
-        name: "_nonce",
-        type: "uint64",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
     inputs: [
       {
-        internalType: "uint256",
-        name: "_amount",
-        type: "uint256",
-      },
-      {
-        internalType: "uint32",
-        name: "_destinationDomain",
-        type: "uint32",
-      },
-      {
-        internalType: "bytes32",
-        name: "_mintRecipient",
-        type: "bytes32",
-      },
-      {
-        internalType: "address",
-        name: "_burnToken",
-        type: "address",
-      },
-      {
-        internalType: "bytes32",
-        name: "_destinationCaller",
-        type: "bytes32",
-      },
-    ],
-    name: "depositForBurnWithCaller",
-    outputs: [
-      {
-        internalType: "uint64",
-        name: "_nonce",
-        type: "uint64",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_amount",
-        type: "uint256",
-      },
-      {
-        internalType: "uint32",
-        name: "_destinationDomain",
-        type: "uint32",
-      },
-      {
-        internalType: "bytes32",
-        name: "_mintRecipient",
-        type: "bytes32",
-      },
-      {
-        internalType: "address",
-        name: "_burnToken",
-        type: "address",
-      },
-      {
-        internalType: "bytes",
-        name: "_hookData",
-        type: "bytes",
-      },
-    ],
-    name: "depositForBurnWithHook",
-    outputs: [
-      {
-        internalType: "uint64",
-        name: "_nonce",
-        type: "uint64",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_amount",
-        type: "uint256",
-      },
-      {
-        internalType: "uint32",
-        name: "_destinationDomain",
-        type: "uint32",
-      },
-      {
-        internalType: "bytes32",
-        name: "_mintRecipient",
-        type: "bytes32",
-      },
-      {
-        internalType: "address",
-        name: "_burnToken",
-        type: "address",
-      },
-      {
-        internalType: "bytes32",
-        name: "_destinationCaller",
-        type: "bytes32",
-      },
-      {
-        internalType: "bytes",
-        name: "_hookData",
-        type: "bytes",
-      },
-    ],
-    name: "depositForBurnWithHookAndCaller",
-    outputs: [
-      {
-        internalType: "uint64",
-        name: "_nonce",
-        type: "uint64",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "bytes",
-        name: "_originalMessage",
-        type: "bytes",
-      },
-      {
-        internalType: "bytes",
-        name: "_originalAttestation",
-        type: "bytes",
-      },
-      {
-        internalType: "bytes32",
-        name: "_newDestinationCaller",
-        type: "bytes32",
-      },
-      {
-        internalType: "bytes32",
-        name: "_newMintRecipient",
-        type: "bytes32",
-      },
-    ],
-    name: "replaceDepositForBurn",
-    outputs: [
-      {
-        internalType: "uint64",
-        name: "_nonce",
-        type: "uint64",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "uint64",
-        name: "nonce",
-        type: "uint64",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "burnToken",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
         name: "amount",
         type: "uint256",
+        internalType: "uint256",
       },
       {
-        indexed: true,
-        internalType: "address",
-        name: "depositor",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "bytes32",
-        name: "mintRecipient",
-        type: "bytes32",
-      },
-      {
-        indexed: false,
-        internalType: "uint32",
         name: "destinationDomain",
         type: "uint32",
+        internalType: "uint32",
       },
       {
-        indexed: false,
-        internalType: "bytes32",
-        name: "destinationTokenMessenger",
+        name: "mintRecipient",
         type: "bytes32",
+        internalType: "bytes32",
       },
       {
-        indexed: false,
-        internalType: "bytes32",
+        name: "burnToken",
+        type: "address",
+        internalType: "address",
+      },
+      {
         name: "destinationCaller",
         type: "bytes32",
+        internalType: "bytes32",
+      },
+      {
+        name: "maxFee",
+        type: "uint256",
+        internalType: "uint256",
+      },
+      {
+        name: "minFinalityThreshold",
+        type: "uint32",
+        internalType: "uint32",
       },
     ],
-    name: "DepositForBurn",
-    type: "event",
+    outputs: [],
+    stateMutability: "nonpayable",
   },
   {
+    type: "function",
+    name: "depositForBurnWithHook",
     inputs: [
       {
-        internalType: "address",
-        name: "_token",
-        type: "address",
-      },
-    ],
-    name: "burnLimitsPerMessage",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
+        name: "amount",
         type: "uint256",
+        internalType: "uint256",
+      },
+      {
+        name: "destinationDomain",
+        type: "uint32",
+        internalType: "uint32",
+      },
+      {
+        name: "mintRecipient",
+        type: "bytes32",
+        internalType: "bytes32",
+      },
+      {
+        name: "burnToken",
+        type: "address",
+        internalType: "address",
+      },
+      {
+        name: "destinationCaller",
+        type: "bytes32",
+        internalType: "bytes32",
+      },
+      {
+        name: "maxFee",
+        type: "uint256",
+        internalType: "uint256",
+      },
+      {
+        name: "minFinalityThreshold",
+        type: "uint32",
+        internalType: "uint32",
+      },
+      {
+        name: "hookData",
+        type: "bytes",
+        internalType: "bytes",
+      },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "feeRecipient",
+    inputs: [],
+    outputs: [
+      {
+        name: "",
+        type: "address",
+        internalType: "address",
       },
     ],
     stateMutability: "view",
-    type: "function",
   },
   {
+    type: "function",
+    name: "handleReceiveFinalizedMessage",
+    inputs: [
+      {
+        name: "remoteDomain",
+        type: "uint32",
+        internalType: "uint32",
+      },
+      {
+        name: "sender",
+        type: "bytes32",
+        internalType: "bytes32",
+      },
+      {
+        name: "",
+        type: "uint32",
+        internalType: "uint32",
+      },
+      {
+        name: "messageBody",
+        type: "bytes",
+        internalType: "bytes",
+      },
+    ],
+    outputs: [
+      {
+        name: "",
+        type: "bool",
+        internalType: "bool",
+      },
+    ],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "handleReceiveUnfinalizedMessage",
+    inputs: [
+      {
+        name: "remoteDomain",
+        type: "uint32",
+        internalType: "uint32",
+      },
+      {
+        name: "sender",
+        type: "bytes32",
+        internalType: "bytes32",
+      },
+      {
+        name: "finalityThresholdExecuted",
+        type: "uint32",
+        internalType: "uint32",
+      },
+      {
+        name: "messageBody",
+        type: "bytes",
+        internalType: "bytes",
+      },
+    ],
+    outputs: [
+      {
+        name: "",
+        type: "bool",
+        internalType: "bool",
+      },
+    ],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "initialize",
+    inputs: [
+      {
+        name: "owner_",
+        type: "address",
+        internalType: "address",
+      },
+      {
+        name: "rescuer_",
+        type: "address",
+        internalType: "address",
+      },
+      {
+        name: "feeRecipient_",
+        type: "address",
+        internalType: "address",
+      },
+      {
+        name: "denylister_",
+        type: "address",
+        internalType: "address",
+      },
+      {
+        name: "tokenMinter_",
+        type: "address",
+        internalType: "address",
+      },
+      {
+        name: "remoteDomains_",
+        type: "uint32[]",
+        internalType: "uint32[]",
+      },
+      {
+        name: "remoteTokenMessengers_",
+        type: "bytes32[]",
+        internalType: "bytes32[]",
+      },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "initializedVersion",
     inputs: [],
+    outputs: [
+      {
+        name: "",
+        type: "uint64",
+        internalType: "uint64",
+      },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "isDenylisted",
+    inputs: [
+      {
+        name: "account",
+        type: "address",
+        internalType: "address",
+      },
+    ],
+    outputs: [
+      {
+        name: "",
+        type: "bool",
+        internalType: "bool",
+      },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
     name: "localMessageTransmitter",
+    inputs: [],
     outputs: [
       {
-        internalType: "contract IMessageTransmitter",
         name: "",
         type: "address",
+        internalType: "address",
       },
     ],
     stateMutability: "view",
-    type: "function",
   },
   {
-    inputs: [],
+    type: "function",
     name: "localMinter",
+    inputs: [],
     outputs: [
       {
-        internalType: "contract ITokenMinter",
         name: "",
         type: "address",
+        internalType: "contract ITokenMinterV2",
       },
     ],
     stateMutability: "view",
+  },
+  {
     type: "function",
+    name: "messageBodyVersion",
+    inputs: [],
+    outputs: [
+      {
+        name: "",
+        type: "uint32",
+        internalType: "uint32",
+      },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "owner",
+    inputs: [],
+    outputs: [
+      {
+        name: "",
+        type: "address",
+        internalType: "address",
+      },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "pendingOwner",
+    inputs: [],
+    outputs: [
+      {
+        name: "",
+        type: "address",
+        internalType: "address",
+      },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "remoteTokenMessengers",
+    inputs: [
+      {
+        name: "",
+        type: "uint32",
+        internalType: "uint32",
+      },
+    ],
+    outputs: [
+      {
+        name: "",
+        type: "bytes32",
+        internalType: "bytes32",
+      },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "removeLocalMinter",
+    inputs: [],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "removeRemoteTokenMessenger",
+    inputs: [
+      {
+        name: "domain",
+        type: "uint32",
+        internalType: "uint32",
+      },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "rescueERC20",
+    inputs: [
+      {
+        name: "tokenContract",
+        type: "address",
+        internalType: "contract IERC20",
+      },
+      {
+        name: "to",
+        type: "address",
+        internalType: "address",
+      },
+      {
+        name: "amount",
+        type: "uint256",
+        internalType: "uint256",
+      },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "rescuer",
+    inputs: [],
+    outputs: [
+      {
+        name: "",
+        type: "address",
+        internalType: "address",
+      },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "setFeeRecipient",
+    inputs: [
+      {
+        name: "_feeRecipient",
+        type: "address",
+        internalType: "address",
+      },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "transferOwnership",
+    inputs: [
+      {
+        name: "newOwner",
+        type: "address",
+        internalType: "address",
+      },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "unDenylist",
+    inputs: [
+      {
+        name: "account",
+        type: "address",
+        internalType: "address",
+      },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "updateDenylister",
+    inputs: [
+      {
+        name: "newDenylister",
+        type: "address",
+        internalType: "address",
+      },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "updateRescuer",
+    inputs: [
+      {
+        name: "newRescuer",
+        type: "address",
+        internalType: "address",
+      },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "event",
+    name: "Denylisted",
+    inputs: [
+      {
+        name: "account",
+        type: "address",
+        indexed: true,
+        internalType: "address",
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: "event",
+    name: "DenylisterChanged",
+    inputs: [
+      {
+        name: "oldDenylister",
+        type: "address",
+        indexed: true,
+        internalType: "address",
+      },
+      {
+        name: "newDenylister",
+        type: "address",
+        indexed: true,
+        internalType: "address",
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: "event",
+    name: "DepositForBurn",
+    inputs: [
+      {
+        name: "burnToken",
+        type: "address",
+        indexed: true,
+        internalType: "address",
+      },
+      {
+        name: "amount",
+        type: "uint256",
+        indexed: false,
+        internalType: "uint256",
+      },
+      {
+        name: "depositor",
+        type: "address",
+        indexed: true,
+        internalType: "address",
+      },
+      {
+        name: "mintRecipient",
+        type: "bytes32",
+        indexed: false,
+        internalType: "bytes32",
+      },
+      {
+        name: "destinationDomain",
+        type: "uint32",
+        indexed: false,
+        internalType: "uint32",
+      },
+      {
+        name: "destinationTokenMessenger",
+        type: "bytes32",
+        indexed: false,
+        internalType: "bytes32",
+      },
+      {
+        name: "destinationCaller",
+        type: "bytes32",
+        indexed: false,
+        internalType: "bytes32",
+      },
+      {
+        name: "maxFee",
+        type: "uint256",
+        indexed: false,
+        internalType: "uint256",
+      },
+      {
+        name: "minFinalityThreshold",
+        type: "uint32",
+        indexed: true,
+        internalType: "uint32",
+      },
+      {
+        name: "hookData",
+        type: "bytes",
+        indexed: false,
+        internalType: "bytes",
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: "event",
+    name: "FeeRecipientSet",
+    inputs: [
+      {
+        name: "feeRecipient",
+        type: "address",
+        indexed: false,
+        internalType: "address",
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: "event",
+    name: "Initialized",
+    inputs: [
+      {
+        name: "version",
+        type: "uint64",
+        indexed: false,
+        internalType: "uint64",
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: "event",
+    name: "LocalMinterAdded",
+    inputs: [
+      {
+        name: "localMinter",
+        type: "address",
+        indexed: false,
+        internalType: "address",
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: "event",
+    name: "LocalMinterRemoved",
+    inputs: [
+      {
+        name: "localMinter",
+        type: "address",
+        indexed: false,
+        internalType: "address",
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: "event",
+    name: "MintAndWithdraw",
+    inputs: [
+      {
+        name: "mintRecipient",
+        type: "address",
+        indexed: true,
+        internalType: "address",
+      },
+      {
+        name: "amount",
+        type: "uint256",
+        indexed: false,
+        internalType: "uint256",
+      },
+      {
+        name: "mintToken",
+        type: "address",
+        indexed: true,
+        internalType: "address",
+      },
+      {
+        name: "feeCollected",
+        type: "uint256",
+        indexed: false,
+        internalType: "uint256",
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: "event",
+    name: "OwnershipTransferStarted",
+    inputs: [
+      {
+        name: "previousOwner",
+        type: "address",
+        indexed: true,
+        internalType: "address",
+      },
+      {
+        name: "newOwner",
+        type: "address",
+        indexed: true,
+        internalType: "address",
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: "event",
+    name: "OwnershipTransferred",
+    inputs: [
+      {
+        name: "previousOwner",
+        type: "address",
+        indexed: true,
+        internalType: "address",
+      },
+      {
+        name: "newOwner",
+        type: "address",
+        indexed: true,
+        internalType: "address",
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: "event",
+    name: "RemoteTokenMessengerAdded",
+    inputs: [
+      {
+        name: "domain",
+        type: "uint32",
+        indexed: false,
+        internalType: "uint32",
+      },
+      {
+        name: "tokenMessenger",
+        type: "bytes32",
+        indexed: false,
+        internalType: "bytes32",
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: "event",
+    name: "RemoteTokenMessengerRemoved",
+    inputs: [
+      {
+        name: "domain",
+        type: "uint32",
+        indexed: false,
+        internalType: "uint32",
+      },
+      {
+        name: "tokenMessenger",
+        type: "bytes32",
+        indexed: false,
+        internalType: "bytes32",
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: "event",
+    name: "RescuerChanged",
+    inputs: [
+      {
+        name: "newRescuer",
+        type: "address",
+        indexed: true,
+        internalType: "address",
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: "event",
+    name: "UnDenylisted",
+    inputs: [
+      {
+        name: "account",
+        type: "address",
+        indexed: true,
+        internalType: "address",
+      },
+    ],
+    anonymous: false,
   },
 ] as const;
 

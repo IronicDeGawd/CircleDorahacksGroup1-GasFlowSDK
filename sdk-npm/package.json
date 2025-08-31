@@ -1,6 +1,6 @@
 {
   "name": "@gasflow/sdk",
-  "version": "0.1.21",
+  "version": "0.5.1",
   "description": "Universal Cross-Chain Gas Payment SDK powered by Circle CCTP V2 and Paymaster",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -12,6 +12,7 @@
     "lint": "eslint src/**/*.ts",
     "format": "prettier --write src/**/*.ts",
     "typechain": "typechain --target ethers-v5 --out-dir src/contracts/types src/contracts/abis/*.json",
+    "verify-cctp-addresses": "node -e \"const { verifyCCTPConfiguration } = require('./dist/contracts/addresses'); const result = verifyCCTPConfiguration(); console.log('CCTP Address Validation:', result); process.exit(result.isValid ? 0 : 1);\"",
     "demo:dev": "cd demo && npm run dev",
     "demo:build": "cd demo && npm run build",
     "prepublishOnly": "npm run build",
@@ -31,8 +32,6 @@
   "license": "MIT",
   "dependencies": {
     "@circle-fin/circle-sdk": "^2.9.0",
-    "@wormhole-foundation/sdk": "^0.10.0",
-    "@wormhole-foundation/sdk-evm": "^0.10.0",
     "axios": "^1.6.0",
     "dotenv": "^16.3.1",
     "ethers": "^5.7.2",

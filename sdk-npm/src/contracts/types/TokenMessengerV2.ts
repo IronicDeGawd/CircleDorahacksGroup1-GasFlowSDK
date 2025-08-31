@@ -28,57 +28,140 @@ import type {
 
 export interface TokenMessengerV2Interface extends utils.Interface {
   functions: {
-    "depositForBurn(uint256,uint32,bytes32,address)": FunctionFragment;
-    "depositForBurnWithCaller(uint256,uint32,bytes32,address,bytes32)": FunctionFragment;
-    "depositForBurnWithHook(uint256,uint32,bytes32,address,bytes)": FunctionFragment;
-    "depositForBurnWithHookAndCaller(uint256,uint32,bytes32,address,bytes32,bytes)": FunctionFragment;
-    "replaceDepositForBurn(bytes,bytes,bytes32,bytes32)": FunctionFragment;
-    "burnLimitsPerMessage(address)": FunctionFragment;
+    "acceptOwnership()": FunctionFragment;
+    "addLocalMinter(address)": FunctionFragment;
+    "addRemoteTokenMessenger(uint32,bytes32)": FunctionFragment;
+    "denylist(address)": FunctionFragment;
+    "denylister()": FunctionFragment;
+    "depositForBurn(uint256,uint32,bytes32,address,bytes32,uint256,uint32)": FunctionFragment;
+    "depositForBurnWithHook(uint256,uint32,bytes32,address,bytes32,uint256,uint32,bytes)": FunctionFragment;
+    "feeRecipient()": FunctionFragment;
+    "handleReceiveFinalizedMessage(uint32,bytes32,uint32,bytes)": FunctionFragment;
+    "handleReceiveUnfinalizedMessage(uint32,bytes32,uint32,bytes)": FunctionFragment;
+    "initialize(address,address,address,address,address,uint32[],bytes32[])": FunctionFragment;
+    "initializedVersion()": FunctionFragment;
+    "isDenylisted(address)": FunctionFragment;
     "localMessageTransmitter()": FunctionFragment;
     "localMinter()": FunctionFragment;
+    "messageBodyVersion()": FunctionFragment;
+    "owner()": FunctionFragment;
+    "pendingOwner()": FunctionFragment;
+    "remoteTokenMessengers(uint32)": FunctionFragment;
+    "removeLocalMinter()": FunctionFragment;
+    "removeRemoteTokenMessenger(uint32)": FunctionFragment;
+    "rescueERC20(address,address,uint256)": FunctionFragment;
+    "rescuer()": FunctionFragment;
+    "setFeeRecipient(address)": FunctionFragment;
+    "transferOwnership(address)": FunctionFragment;
+    "unDenylist(address)": FunctionFragment;
+    "updateDenylister(address)": FunctionFragment;
+    "updateRescuer(address)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "acceptOwnership"
+      | "addLocalMinter"
+      | "addRemoteTokenMessenger"
+      | "denylist"
+      | "denylister"
       | "depositForBurn"
-      | "depositForBurnWithCaller"
       | "depositForBurnWithHook"
-      | "depositForBurnWithHookAndCaller"
-      | "replaceDepositForBurn"
-      | "burnLimitsPerMessage"
+      | "feeRecipient"
+      | "handleReceiveFinalizedMessage"
+      | "handleReceiveUnfinalizedMessage"
+      | "initialize"
+      | "initializedVersion"
+      | "isDenylisted"
       | "localMessageTransmitter"
       | "localMinter"
+      | "messageBodyVersion"
+      | "owner"
+      | "pendingOwner"
+      | "remoteTokenMessengers"
+      | "removeLocalMinter"
+      | "removeRemoteTokenMessenger"
+      | "rescueERC20"
+      | "rescuer"
+      | "setFeeRecipient"
+      | "transferOwnership"
+      | "unDenylist"
+      | "updateDenylister"
+      | "updateRescuer"
   ): FunctionFragment;
 
   encodeFunctionData(
+    functionFragment: "acceptOwnership",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "addLocalMinter",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "addRemoteTokenMessenger",
+    values: [BigNumberish, BytesLike]
+  ): string;
+  encodeFunctionData(functionFragment: "denylist", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "denylister",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "depositForBurn",
-    values: [BigNumberish, BigNumberish, BytesLike, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "depositForBurnWithCaller",
-    values: [BigNumberish, BigNumberish, BytesLike, string, BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "depositForBurnWithHook",
-    values: [BigNumberish, BigNumberish, BytesLike, string, BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "depositForBurnWithHookAndCaller",
     values: [
       BigNumberish,
       BigNumberish,
       BytesLike,
       string,
       BytesLike,
+      BigNumberish,
+      BigNumberish
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "depositForBurnWithHook",
+    values: [
+      BigNumberish,
+      BigNumberish,
+      BytesLike,
+      string,
+      BytesLike,
+      BigNumberish,
+      BigNumberish,
       BytesLike
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "replaceDepositForBurn",
-    values: [BytesLike, BytesLike, BytesLike, BytesLike]
+    functionFragment: "feeRecipient",
+    values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "burnLimitsPerMessage",
+    functionFragment: "handleReceiveFinalizedMessage",
+    values: [BigNumberish, BytesLike, BigNumberish, BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "handleReceiveUnfinalizedMessage",
+    values: [BigNumberish, BytesLike, BigNumberish, BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "initialize",
+    values: [
+      string,
+      string,
+      string,
+      string,
+      string,
+      BigNumberish[],
+      BytesLike[]
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "initializedVersion",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "isDenylisted",
     values: [string]
   ): string;
   encodeFunctionData(
@@ -89,13 +172,66 @@ export interface TokenMessengerV2Interface extends utils.Interface {
     functionFragment: "localMinter",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "messageBodyVersion",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "pendingOwner",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "remoteTokenMessengers",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "removeLocalMinter",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "removeRemoteTokenMessenger",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "rescueERC20",
+    values: [string, string, BigNumberish]
+  ): string;
+  encodeFunctionData(functionFragment: "rescuer", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "setFeeRecipient",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "transferOwnership",
+    values: [string]
+  ): string;
+  encodeFunctionData(functionFragment: "unDenylist", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "updateDenylister",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "updateRescuer",
+    values: [string]
+  ): string;
 
   decodeFunctionResult(
-    functionFragment: "depositForBurn",
+    functionFragment: "acceptOwnership",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "depositForBurnWithCaller",
+    functionFragment: "addLocalMinter",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "addRemoteTokenMessenger",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "denylist", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "denylister", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "depositForBurn",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -103,15 +239,24 @@ export interface TokenMessengerV2Interface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "depositForBurnWithHookAndCaller",
+    functionFragment: "feeRecipient",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "replaceDepositForBurn",
+    functionFragment: "handleReceiveFinalizedMessage",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "burnLimitsPerMessage",
+    functionFragment: "handleReceiveUnfinalizedMessage",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "initializedVersion",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "isDenylisted",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -122,16 +267,105 @@ export interface TokenMessengerV2Interface extends utils.Interface {
     functionFragment: "localMinter",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "messageBodyVersion",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "pendingOwner",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "remoteTokenMessengers",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "removeLocalMinter",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "removeRemoteTokenMessenger",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "rescueERC20",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "rescuer", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setFeeRecipient",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "transferOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "unDenylist", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "updateDenylister",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updateRescuer",
+    data: BytesLike
+  ): Result;
 
   events: {
-    "DepositForBurn(uint64,address,uint256,address,bytes32,uint32,bytes32,bytes32)": EventFragment;
+    "Denylisted(address)": EventFragment;
+    "DenylisterChanged(address,address)": EventFragment;
+    "DepositForBurn(address,uint256,address,bytes32,uint32,bytes32,bytes32,uint256,uint32,bytes)": EventFragment;
+    "FeeRecipientSet(address)": EventFragment;
+    "Initialized(uint64)": EventFragment;
+    "LocalMinterAdded(address)": EventFragment;
+    "LocalMinterRemoved(address)": EventFragment;
+    "MintAndWithdraw(address,uint256,address,uint256)": EventFragment;
+    "OwnershipTransferStarted(address,address)": EventFragment;
+    "OwnershipTransferred(address,address)": EventFragment;
+    "RemoteTokenMessengerAdded(uint32,bytes32)": EventFragment;
+    "RemoteTokenMessengerRemoved(uint32,bytes32)": EventFragment;
+    "RescuerChanged(address)": EventFragment;
+    "UnDenylisted(address)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "Denylisted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "DenylisterChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "DepositForBurn"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "FeeRecipientSet"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LocalMinterAdded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LocalMinterRemoved"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "MintAndWithdraw"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OwnershipTransferStarted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RemoteTokenMessengerAdded"): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "RemoteTokenMessengerRemoved"
+  ): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RescuerChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "UnDenylisted"): EventFragment;
 }
 
+export interface DenylistedEventObject {
+  account: string;
+}
+export type DenylistedEvent = TypedEvent<[string], DenylistedEventObject>;
+
+export type DenylistedEventFilter = TypedEventFilter<DenylistedEvent>;
+
+export interface DenylisterChangedEventObject {
+  oldDenylister: string;
+  newDenylister: string;
+}
+export type DenylisterChangedEvent = TypedEvent<
+  [string, string],
+  DenylisterChangedEventObject
+>;
+
+export type DenylisterChangedEventFilter =
+  TypedEventFilter<DenylisterChangedEvent>;
+
 export interface DepositForBurnEventObject {
-  nonce: BigNumber;
   burnToken: string;
   amount: BigNumber;
   depositor: string;
@@ -139,13 +373,144 @@ export interface DepositForBurnEventObject {
   destinationDomain: number;
   destinationTokenMessenger: string;
   destinationCaller: string;
+  maxFee: BigNumber;
+  minFinalityThreshold: number;
+  hookData: string;
 }
 export type DepositForBurnEvent = TypedEvent<
-  [BigNumber, string, BigNumber, string, string, number, string, string],
+  [
+    string,
+    BigNumber,
+    string,
+    string,
+    number,
+    string,
+    string,
+    BigNumber,
+    number,
+    string
+  ],
   DepositForBurnEventObject
 >;
 
 export type DepositForBurnEventFilter = TypedEventFilter<DepositForBurnEvent>;
+
+export interface FeeRecipientSetEventObject {
+  feeRecipient: string;
+}
+export type FeeRecipientSetEvent = TypedEvent<
+  [string],
+  FeeRecipientSetEventObject
+>;
+
+export type FeeRecipientSetEventFilter = TypedEventFilter<FeeRecipientSetEvent>;
+
+export interface InitializedEventObject {
+  version: BigNumber;
+}
+export type InitializedEvent = TypedEvent<[BigNumber], InitializedEventObject>;
+
+export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
+
+export interface LocalMinterAddedEventObject {
+  localMinter: string;
+}
+export type LocalMinterAddedEvent = TypedEvent<
+  [string],
+  LocalMinterAddedEventObject
+>;
+
+export type LocalMinterAddedEventFilter =
+  TypedEventFilter<LocalMinterAddedEvent>;
+
+export interface LocalMinterRemovedEventObject {
+  localMinter: string;
+}
+export type LocalMinterRemovedEvent = TypedEvent<
+  [string],
+  LocalMinterRemovedEventObject
+>;
+
+export type LocalMinterRemovedEventFilter =
+  TypedEventFilter<LocalMinterRemovedEvent>;
+
+export interface MintAndWithdrawEventObject {
+  mintRecipient: string;
+  amount: BigNumber;
+  mintToken: string;
+  feeCollected: BigNumber;
+}
+export type MintAndWithdrawEvent = TypedEvent<
+  [string, BigNumber, string, BigNumber],
+  MintAndWithdrawEventObject
+>;
+
+export type MintAndWithdrawEventFilter = TypedEventFilter<MintAndWithdrawEvent>;
+
+export interface OwnershipTransferStartedEventObject {
+  previousOwner: string;
+  newOwner: string;
+}
+export type OwnershipTransferStartedEvent = TypedEvent<
+  [string, string],
+  OwnershipTransferStartedEventObject
+>;
+
+export type OwnershipTransferStartedEventFilter =
+  TypedEventFilter<OwnershipTransferStartedEvent>;
+
+export interface OwnershipTransferredEventObject {
+  previousOwner: string;
+  newOwner: string;
+}
+export type OwnershipTransferredEvent = TypedEvent<
+  [string, string],
+  OwnershipTransferredEventObject
+>;
+
+export type OwnershipTransferredEventFilter =
+  TypedEventFilter<OwnershipTransferredEvent>;
+
+export interface RemoteTokenMessengerAddedEventObject {
+  domain: number;
+  tokenMessenger: string;
+}
+export type RemoteTokenMessengerAddedEvent = TypedEvent<
+  [number, string],
+  RemoteTokenMessengerAddedEventObject
+>;
+
+export type RemoteTokenMessengerAddedEventFilter =
+  TypedEventFilter<RemoteTokenMessengerAddedEvent>;
+
+export interface RemoteTokenMessengerRemovedEventObject {
+  domain: number;
+  tokenMessenger: string;
+}
+export type RemoteTokenMessengerRemovedEvent = TypedEvent<
+  [number, string],
+  RemoteTokenMessengerRemovedEventObject
+>;
+
+export type RemoteTokenMessengerRemovedEventFilter =
+  TypedEventFilter<RemoteTokenMessengerRemovedEvent>;
+
+export interface RescuerChangedEventObject {
+  newRescuer: string;
+}
+export type RescuerChangedEvent = TypedEvent<
+  [string],
+  RescuerChangedEventObject
+>;
+
+export type RescuerChangedEventFilter = TypedEventFilter<RescuerChangedEvent>;
+
+export interface UnDenylistedEventObject {
+  account: string;
+}
+export type UnDenylistedEvent = TypedEvent<[string], UnDenylistedEventObject>;
+
+export type UnDenylistedEventFilter = TypedEventFilter<UnDenylistedEvent>;
 
 export interface TokenMessengerV2 extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -174,293 +539,741 @@ export interface TokenMessengerV2 extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    depositForBurn(
-      _amount: BigNumberish,
-      _destinationDomain: BigNumberish,
-      _mintRecipient: BytesLike,
-      _burnToken: string,
+    acceptOwnership(
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
-    depositForBurnWithCaller(
-      _amount: BigNumberish,
-      _destinationDomain: BigNumberish,
-      _mintRecipient: BytesLike,
-      _burnToken: string,
-      _destinationCaller: BytesLike,
+    addLocalMinter(
+      newLocalMinter: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    addRemoteTokenMessenger(
+      domain: BigNumberish,
+      tokenMessenger: BytesLike,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    denylist(
+      account: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    denylister(overrides?: CallOverrides): Promise<[string]>;
+
+    depositForBurn(
+      amount: BigNumberish,
+      destinationDomain: BigNumberish,
+      mintRecipient: BytesLike,
+      burnToken: string,
+      destinationCaller: BytesLike,
+      maxFee: BigNumberish,
+      minFinalityThreshold: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     depositForBurnWithHook(
-      _amount: BigNumberish,
-      _destinationDomain: BigNumberish,
-      _mintRecipient: BytesLike,
-      _burnToken: string,
-      _hookData: BytesLike,
+      amount: BigNumberish,
+      destinationDomain: BigNumberish,
+      mintRecipient: BytesLike,
+      burnToken: string,
+      destinationCaller: BytesLike,
+      maxFee: BigNumberish,
+      minFinalityThreshold: BigNumberish,
+      hookData: BytesLike,
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
-    depositForBurnWithHookAndCaller(
-      _amount: BigNumberish,
-      _destinationDomain: BigNumberish,
-      _mintRecipient: BytesLike,
-      _burnToken: string,
-      _destinationCaller: BytesLike,
-      _hookData: BytesLike,
+    feeRecipient(overrides?: CallOverrides): Promise<[string]>;
+
+    handleReceiveFinalizedMessage(
+      remoteDomain: BigNumberish,
+      sender: BytesLike,
+      arg2: BigNumberish,
+      messageBody: BytesLike,
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
-    replaceDepositForBurn(
-      _originalMessage: BytesLike,
-      _originalAttestation: BytesLike,
-      _newDestinationCaller: BytesLike,
-      _newMintRecipient: BytesLike,
+    handleReceiveUnfinalizedMessage(
+      remoteDomain: BigNumberish,
+      sender: BytesLike,
+      finalityThresholdExecuted: BigNumberish,
+      messageBody: BytesLike,
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
-    burnLimitsPerMessage(
-      _token: string,
+    initialize(
+      owner_: string,
+      rescuer_: string,
+      feeRecipient_: string,
+      denylister_: string,
+      tokenMinter_: string,
+      remoteDomains_: BigNumberish[],
+      remoteTokenMessengers_: BytesLike[],
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    initializedVersion(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    isDenylisted(
+      account: string,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<[boolean]>;
 
     localMessageTransmitter(overrides?: CallOverrides): Promise<[string]>;
 
     localMinter(overrides?: CallOverrides): Promise<[string]>;
+
+    messageBodyVersion(overrides?: CallOverrides): Promise<[number]>;
+
+    owner(overrides?: CallOverrides): Promise<[string]>;
+
+    pendingOwner(overrides?: CallOverrides): Promise<[string]>;
+
+    remoteTokenMessengers(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    removeLocalMinter(
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    removeRemoteTokenMessenger(
+      domain: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    rescueERC20(
+      tokenContract: string,
+      to: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    rescuer(overrides?: CallOverrides): Promise<[string]>;
+
+    setFeeRecipient(
+      _feeRecipient: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    transferOwnership(
+      newOwner: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    unDenylist(
+      account: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    updateDenylister(
+      newDenylister: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    updateRescuer(
+      newRescuer: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
   };
 
-  depositForBurn(
-    _amount: BigNumberish,
-    _destinationDomain: BigNumberish,
-    _mintRecipient: BytesLike,
-    _burnToken: string,
+  acceptOwnership(
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
-  depositForBurnWithCaller(
-    _amount: BigNumberish,
-    _destinationDomain: BigNumberish,
-    _mintRecipient: BytesLike,
-    _burnToken: string,
-    _destinationCaller: BytesLike,
+  addLocalMinter(
+    newLocalMinter: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  addRemoteTokenMessenger(
+    domain: BigNumberish,
+    tokenMessenger: BytesLike,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  denylist(
+    account: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  denylister(overrides?: CallOverrides): Promise<string>;
+
+  depositForBurn(
+    amount: BigNumberish,
+    destinationDomain: BigNumberish,
+    mintRecipient: BytesLike,
+    burnToken: string,
+    destinationCaller: BytesLike,
+    maxFee: BigNumberish,
+    minFinalityThreshold: BigNumberish,
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   depositForBurnWithHook(
-    _amount: BigNumberish,
-    _destinationDomain: BigNumberish,
-    _mintRecipient: BytesLike,
-    _burnToken: string,
-    _hookData: BytesLike,
+    amount: BigNumberish,
+    destinationDomain: BigNumberish,
+    mintRecipient: BytesLike,
+    burnToken: string,
+    destinationCaller: BytesLike,
+    maxFee: BigNumberish,
+    minFinalityThreshold: BigNumberish,
+    hookData: BytesLike,
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
-  depositForBurnWithHookAndCaller(
-    _amount: BigNumberish,
-    _destinationDomain: BigNumberish,
-    _mintRecipient: BytesLike,
-    _burnToken: string,
-    _destinationCaller: BytesLike,
-    _hookData: BytesLike,
+  feeRecipient(overrides?: CallOverrides): Promise<string>;
+
+  handleReceiveFinalizedMessage(
+    remoteDomain: BigNumberish,
+    sender: BytesLike,
+    arg2: BigNumberish,
+    messageBody: BytesLike,
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
-  replaceDepositForBurn(
-    _originalMessage: BytesLike,
-    _originalAttestation: BytesLike,
-    _newDestinationCaller: BytesLike,
-    _newMintRecipient: BytesLike,
+  handleReceiveUnfinalizedMessage(
+    remoteDomain: BigNumberish,
+    sender: BytesLike,
+    finalityThresholdExecuted: BigNumberish,
+    messageBody: BytesLike,
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
-  burnLimitsPerMessage(
-    _token: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  initialize(
+    owner_: string,
+    rescuer_: string,
+    feeRecipient_: string,
+    denylister_: string,
+    tokenMinter_: string,
+    remoteDomains_: BigNumberish[],
+    remoteTokenMessengers_: BytesLike[],
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  initializedVersion(overrides?: CallOverrides): Promise<BigNumber>;
+
+  isDenylisted(account: string, overrides?: CallOverrides): Promise<boolean>;
 
   localMessageTransmitter(overrides?: CallOverrides): Promise<string>;
 
   localMinter(overrides?: CallOverrides): Promise<string>;
 
-  callStatic: {
-    depositForBurn(
-      _amount: BigNumberish,
-      _destinationDomain: BigNumberish,
-      _mintRecipient: BytesLike,
-      _burnToken: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+  messageBodyVersion(overrides?: CallOverrides): Promise<number>;
 
-    depositForBurnWithCaller(
-      _amount: BigNumberish,
-      _destinationDomain: BigNumberish,
-      _mintRecipient: BytesLike,
-      _burnToken: string,
-      _destinationCaller: BytesLike,
+  owner(overrides?: CallOverrides): Promise<string>;
+
+  pendingOwner(overrides?: CallOverrides): Promise<string>;
+
+  remoteTokenMessengers(
+    arg0: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  removeLocalMinter(
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  removeRemoteTokenMessenger(
+    domain: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  rescueERC20(
+    tokenContract: string,
+    to: string,
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  rescuer(overrides?: CallOverrides): Promise<string>;
+
+  setFeeRecipient(
+    _feeRecipient: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  transferOwnership(
+    newOwner: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  unDenylist(
+    account: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  updateDenylister(
+    newDenylister: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  updateRescuer(
+    newRescuer: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  callStatic: {
+    acceptOwnership(overrides?: CallOverrides): Promise<void>;
+
+    addLocalMinter(
+      newLocalMinter: string,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<void>;
+
+    addRemoteTokenMessenger(
+      domain: BigNumberish,
+      tokenMessenger: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    denylist(account: string, overrides?: CallOverrides): Promise<void>;
+
+    denylister(overrides?: CallOverrides): Promise<string>;
+
+    depositForBurn(
+      amount: BigNumberish,
+      destinationDomain: BigNumberish,
+      mintRecipient: BytesLike,
+      burnToken: string,
+      destinationCaller: BytesLike,
+      maxFee: BigNumberish,
+      minFinalityThreshold: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     depositForBurnWithHook(
-      _amount: BigNumberish,
-      _destinationDomain: BigNumberish,
-      _mintRecipient: BytesLike,
-      _burnToken: string,
-      _hookData: BytesLike,
+      amount: BigNumberish,
+      destinationDomain: BigNumberish,
+      mintRecipient: BytesLike,
+      burnToken: string,
+      destinationCaller: BytesLike,
+      maxFee: BigNumberish,
+      minFinalityThreshold: BigNumberish,
+      hookData: BytesLike,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<void>;
 
-    depositForBurnWithHookAndCaller(
-      _amount: BigNumberish,
-      _destinationDomain: BigNumberish,
-      _mintRecipient: BytesLike,
-      _burnToken: string,
-      _destinationCaller: BytesLike,
-      _hookData: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    feeRecipient(overrides?: CallOverrides): Promise<string>;
 
-    replaceDepositForBurn(
-      _originalMessage: BytesLike,
-      _originalAttestation: BytesLike,
-      _newDestinationCaller: BytesLike,
-      _newMintRecipient: BytesLike,
+    handleReceiveFinalizedMessage(
+      remoteDomain: BigNumberish,
+      sender: BytesLike,
+      arg2: BigNumberish,
+      messageBody: BytesLike,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<boolean>;
 
-    burnLimitsPerMessage(
-      _token: string,
+    handleReceiveUnfinalizedMessage(
+      remoteDomain: BigNumberish,
+      sender: BytesLike,
+      finalityThresholdExecuted: BigNumberish,
+      messageBody: BytesLike,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<boolean>;
+
+    initialize(
+      owner_: string,
+      rescuer_: string,
+      feeRecipient_: string,
+      denylister_: string,
+      tokenMinter_: string,
+      remoteDomains_: BigNumberish[],
+      remoteTokenMessengers_: BytesLike[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    initializedVersion(overrides?: CallOverrides): Promise<BigNumber>;
+
+    isDenylisted(account: string, overrides?: CallOverrides): Promise<boolean>;
 
     localMessageTransmitter(overrides?: CallOverrides): Promise<string>;
 
     localMinter(overrides?: CallOverrides): Promise<string>;
+
+    messageBodyVersion(overrides?: CallOverrides): Promise<number>;
+
+    owner(overrides?: CallOverrides): Promise<string>;
+
+    pendingOwner(overrides?: CallOverrides): Promise<string>;
+
+    remoteTokenMessengers(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    removeLocalMinter(overrides?: CallOverrides): Promise<void>;
+
+    removeRemoteTokenMessenger(
+      domain: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    rescueERC20(
+      tokenContract: string,
+      to: string,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    rescuer(overrides?: CallOverrides): Promise<string>;
+
+    setFeeRecipient(
+      _feeRecipient: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    transferOwnership(
+      newOwner: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    unDenylist(account: string, overrides?: CallOverrides): Promise<void>;
+
+    updateDenylister(
+      newDenylister: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    updateRescuer(newRescuer: string, overrides?: CallOverrides): Promise<void>;
   };
 
   filters: {
-    "DepositForBurn(uint64,address,uint256,address,bytes32,uint32,bytes32,bytes32)"(
-      nonce?: BigNumberish | null,
+    "Denylisted(address)"(account?: string | null): DenylistedEventFilter;
+    Denylisted(account?: string | null): DenylistedEventFilter;
+
+    "DenylisterChanged(address,address)"(
+      oldDenylister?: string | null,
+      newDenylister?: string | null
+    ): DenylisterChangedEventFilter;
+    DenylisterChanged(
+      oldDenylister?: string | null,
+      newDenylister?: string | null
+    ): DenylisterChangedEventFilter;
+
+    "DepositForBurn(address,uint256,address,bytes32,uint32,bytes32,bytes32,uint256,uint32,bytes)"(
       burnToken?: string | null,
       amount?: null,
       depositor?: string | null,
       mintRecipient?: null,
       destinationDomain?: null,
       destinationTokenMessenger?: null,
-      destinationCaller?: null
+      destinationCaller?: null,
+      maxFee?: null,
+      minFinalityThreshold?: BigNumberish | null,
+      hookData?: null
     ): DepositForBurnEventFilter;
     DepositForBurn(
-      nonce?: BigNumberish | null,
       burnToken?: string | null,
       amount?: null,
       depositor?: string | null,
       mintRecipient?: null,
       destinationDomain?: null,
       destinationTokenMessenger?: null,
-      destinationCaller?: null
+      destinationCaller?: null,
+      maxFee?: null,
+      minFinalityThreshold?: BigNumberish | null,
+      hookData?: null
     ): DepositForBurnEventFilter;
+
+    "FeeRecipientSet(address)"(feeRecipient?: null): FeeRecipientSetEventFilter;
+    FeeRecipientSet(feeRecipient?: null): FeeRecipientSetEventFilter;
+
+    "Initialized(uint64)"(version?: null): InitializedEventFilter;
+    Initialized(version?: null): InitializedEventFilter;
+
+    "LocalMinterAdded(address)"(
+      localMinter?: null
+    ): LocalMinterAddedEventFilter;
+    LocalMinterAdded(localMinter?: null): LocalMinterAddedEventFilter;
+
+    "LocalMinterRemoved(address)"(
+      localMinter?: null
+    ): LocalMinterRemovedEventFilter;
+    LocalMinterRemoved(localMinter?: null): LocalMinterRemovedEventFilter;
+
+    "MintAndWithdraw(address,uint256,address,uint256)"(
+      mintRecipient?: string | null,
+      amount?: null,
+      mintToken?: string | null,
+      feeCollected?: null
+    ): MintAndWithdrawEventFilter;
+    MintAndWithdraw(
+      mintRecipient?: string | null,
+      amount?: null,
+      mintToken?: string | null,
+      feeCollected?: null
+    ): MintAndWithdrawEventFilter;
+
+    "OwnershipTransferStarted(address,address)"(
+      previousOwner?: string | null,
+      newOwner?: string | null
+    ): OwnershipTransferStartedEventFilter;
+    OwnershipTransferStarted(
+      previousOwner?: string | null,
+      newOwner?: string | null
+    ): OwnershipTransferStartedEventFilter;
+
+    "OwnershipTransferred(address,address)"(
+      previousOwner?: string | null,
+      newOwner?: string | null
+    ): OwnershipTransferredEventFilter;
+    OwnershipTransferred(
+      previousOwner?: string | null,
+      newOwner?: string | null
+    ): OwnershipTransferredEventFilter;
+
+    "RemoteTokenMessengerAdded(uint32,bytes32)"(
+      domain?: null,
+      tokenMessenger?: null
+    ): RemoteTokenMessengerAddedEventFilter;
+    RemoteTokenMessengerAdded(
+      domain?: null,
+      tokenMessenger?: null
+    ): RemoteTokenMessengerAddedEventFilter;
+
+    "RemoteTokenMessengerRemoved(uint32,bytes32)"(
+      domain?: null,
+      tokenMessenger?: null
+    ): RemoteTokenMessengerRemovedEventFilter;
+    RemoteTokenMessengerRemoved(
+      domain?: null,
+      tokenMessenger?: null
+    ): RemoteTokenMessengerRemovedEventFilter;
+
+    "RescuerChanged(address)"(
+      newRescuer?: string | null
+    ): RescuerChangedEventFilter;
+    RescuerChanged(newRescuer?: string | null): RescuerChangedEventFilter;
+
+    "UnDenylisted(address)"(account?: string | null): UnDenylistedEventFilter;
+    UnDenylisted(account?: string | null): UnDenylistedEventFilter;
   };
 
   estimateGas: {
-    depositForBurn(
-      _amount: BigNumberish,
-      _destinationDomain: BigNumberish,
-      _mintRecipient: BytesLike,
-      _burnToken: string,
+    acceptOwnership(
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
-    depositForBurnWithCaller(
-      _amount: BigNumberish,
-      _destinationDomain: BigNumberish,
-      _mintRecipient: BytesLike,
-      _burnToken: string,
-      _destinationCaller: BytesLike,
+    addLocalMinter(
+      newLocalMinter: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    addRemoteTokenMessenger(
+      domain: BigNumberish,
+      tokenMessenger: BytesLike,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    denylist(
+      account: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    denylister(overrides?: CallOverrides): Promise<BigNumber>;
+
+    depositForBurn(
+      amount: BigNumberish,
+      destinationDomain: BigNumberish,
+      mintRecipient: BytesLike,
+      burnToken: string,
+      destinationCaller: BytesLike,
+      maxFee: BigNumberish,
+      minFinalityThreshold: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     depositForBurnWithHook(
-      _amount: BigNumberish,
-      _destinationDomain: BigNumberish,
-      _mintRecipient: BytesLike,
-      _burnToken: string,
-      _hookData: BytesLike,
+      amount: BigNumberish,
+      destinationDomain: BigNumberish,
+      mintRecipient: BytesLike,
+      burnToken: string,
+      destinationCaller: BytesLike,
+      maxFee: BigNumberish,
+      minFinalityThreshold: BigNumberish,
+      hookData: BytesLike,
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
-    depositForBurnWithHookAndCaller(
-      _amount: BigNumberish,
-      _destinationDomain: BigNumberish,
-      _mintRecipient: BytesLike,
-      _burnToken: string,
-      _destinationCaller: BytesLike,
-      _hookData: BytesLike,
+    feeRecipient(overrides?: CallOverrides): Promise<BigNumber>;
+
+    handleReceiveFinalizedMessage(
+      remoteDomain: BigNumberish,
+      sender: BytesLike,
+      arg2: BigNumberish,
+      messageBody: BytesLike,
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
-    replaceDepositForBurn(
-      _originalMessage: BytesLike,
-      _originalAttestation: BytesLike,
-      _newDestinationCaller: BytesLike,
-      _newMintRecipient: BytesLike,
+    handleReceiveUnfinalizedMessage(
+      remoteDomain: BigNumberish,
+      sender: BytesLike,
+      finalityThresholdExecuted: BigNumberish,
+      messageBody: BytesLike,
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
-    burnLimitsPerMessage(
-      _token: string,
+    initialize(
+      owner_: string,
+      rescuer_: string,
+      feeRecipient_: string,
+      denylister_: string,
+      tokenMinter_: string,
+      remoteDomains_: BigNumberish[],
+      remoteTokenMessengers_: BytesLike[],
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    initializedVersion(overrides?: CallOverrides): Promise<BigNumber>;
+
+    isDenylisted(
+      account: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     localMessageTransmitter(overrides?: CallOverrides): Promise<BigNumber>;
 
     localMinter(overrides?: CallOverrides): Promise<BigNumber>;
+
+    messageBodyVersion(overrides?: CallOverrides): Promise<BigNumber>;
+
+    owner(overrides?: CallOverrides): Promise<BigNumber>;
+
+    pendingOwner(overrides?: CallOverrides): Promise<BigNumber>;
+
+    remoteTokenMessengers(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    removeLocalMinter(
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    removeRemoteTokenMessenger(
+      domain: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    rescueERC20(
+      tokenContract: string,
+      to: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    rescuer(overrides?: CallOverrides): Promise<BigNumber>;
+
+    setFeeRecipient(
+      _feeRecipient: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    transferOwnership(
+      newOwner: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    unDenylist(
+      account: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    updateDenylister(
+      newDenylister: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    updateRescuer(
+      newRescuer: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    depositForBurn(
-      _amount: BigNumberish,
-      _destinationDomain: BigNumberish,
-      _mintRecipient: BytesLike,
-      _burnToken: string,
+    acceptOwnership(
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
-    depositForBurnWithCaller(
-      _amount: BigNumberish,
-      _destinationDomain: BigNumberish,
-      _mintRecipient: BytesLike,
-      _burnToken: string,
-      _destinationCaller: BytesLike,
+    addLocalMinter(
+      newLocalMinter: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    addRemoteTokenMessenger(
+      domain: BigNumberish,
+      tokenMessenger: BytesLike,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    denylist(
+      account: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    denylister(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    depositForBurn(
+      amount: BigNumberish,
+      destinationDomain: BigNumberish,
+      mintRecipient: BytesLike,
+      burnToken: string,
+      destinationCaller: BytesLike,
+      maxFee: BigNumberish,
+      minFinalityThreshold: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     depositForBurnWithHook(
-      _amount: BigNumberish,
-      _destinationDomain: BigNumberish,
-      _mintRecipient: BytesLike,
-      _burnToken: string,
-      _hookData: BytesLike,
+      amount: BigNumberish,
+      destinationDomain: BigNumberish,
+      mintRecipient: BytesLike,
+      burnToken: string,
+      destinationCaller: BytesLike,
+      maxFee: BigNumberish,
+      minFinalityThreshold: BigNumberish,
+      hookData: BytesLike,
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
-    depositForBurnWithHookAndCaller(
-      _amount: BigNumberish,
-      _destinationDomain: BigNumberish,
-      _mintRecipient: BytesLike,
-      _burnToken: string,
-      _destinationCaller: BytesLike,
-      _hookData: BytesLike,
+    feeRecipient(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    handleReceiveFinalizedMessage(
+      remoteDomain: BigNumberish,
+      sender: BytesLike,
+      arg2: BigNumberish,
+      messageBody: BytesLike,
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
-    replaceDepositForBurn(
-      _originalMessage: BytesLike,
-      _originalAttestation: BytesLike,
-      _newDestinationCaller: BytesLike,
-      _newMintRecipient: BytesLike,
+    handleReceiveUnfinalizedMessage(
+      remoteDomain: BigNumberish,
+      sender: BytesLike,
+      finalityThresholdExecuted: BigNumberish,
+      messageBody: BytesLike,
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
-    burnLimitsPerMessage(
-      _token: string,
+    initialize(
+      owner_: string,
+      rescuer_: string,
+      feeRecipient_: string,
+      denylister_: string,
+      tokenMinter_: string,
+      remoteDomains_: BigNumberish[],
+      remoteTokenMessengers_: BytesLike[],
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    initializedVersion(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    isDenylisted(
+      account: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -469,5 +1282,61 @@ export interface TokenMessengerV2 extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     localMinter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    messageBodyVersion(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    pendingOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    remoteTokenMessengers(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    removeLocalMinter(
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    removeRemoteTokenMessenger(
+      domain: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    rescueERC20(
+      tokenContract: string,
+      to: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    rescuer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    setFeeRecipient(
+      _feeRecipient: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    transferOwnership(
+      newOwner: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    unDenylist(
+      account: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    updateDenylister(
+      newDenylister: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    updateRescuer(
+      newRescuer: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
   };
 }

@@ -1,6 +1,5 @@
 import { Signer } from 'ethers';
 import { ChainId } from '../types';
-import { SimpleCCTPService } from './SimpleCCTPService';
 import { ProductionCCTPService } from './ProductionCCTPService';
 
 /**
@@ -9,7 +8,6 @@ import { ProductionCCTPService } from './ProductionCCTPService';
 export interface CCTPServiceConfig {
   apiKey: string;
   useTestnet?: boolean;
-  useProductionCCTP?: boolean;
   signers?: Map<ChainId, Signer>;
 }
 
@@ -38,72 +36,49 @@ export interface CCTPService {
  */
 export class CCTPServiceFactory {
   /**
-   * Create appropriate CCTP service based on configuration
+   * Create CCTP service - always uses ProductionCCTPService
    */
   static create(config: CCTPServiceConfig): CCTPService {
     const {
       apiKey,
       useTestnet = true,
-      useProductionCCTP = false,
       signers
     } = config;
 
-    if (useProductionCCTP) {
-      console.log('🔗 Creating ProductionCCTPService with real Circle contracts');
-      
-      const service = new ProductionCCTPService(apiKey, useTestnet);
-      
-      // Set up signers if provided
-      if (signers) {
-        signers.forEach((signer, chainId) => {
-          service.setSigner(chainId, signer);
-        });
-        console.log(`📝 Configured signers for ${signers.size} chains`);
-      } else {
-        console.warn('⚠️ No signers provided - you must call setSigner() before using the service');
-      }
-      
-      return service;
+    console.log('🔗 Creating ProductionCCTPService with real Circle contracts');
+    
+    const service = new ProductionCCTPService(apiKey, useTestnet);
+    
+    // Set up signers if provided
+    if (signers) {
+      signers.forEach((signer, chainId) => {
+        service.setSigner(chainId, signer);
+      });
+      console.log(`📝 Configured signers for ${signers.size} chains`);
     } else {
-      console.log('🎭 Creating SimpleCCTPService with mock implementation');
-      return new SimpleCCTPService(apiKey, useTestnet);
+      console.warn('⚠️ No signers provided - you must call setSigner() before using the service');
     }
+    
+    return service;
   }
 
   /**
-   * Create service with automatic detection based on environment
+   * Create service - simplified to always use production
    */
   static createAuto(config: CCTPServiceConfig): CCTPService {
-    // Auto-detect based on environment and signer availability
-    const hasSigners = config.signers && config.signers.size > 0;
-    const hasApiKey = Boolean(config.apiKey && config.apiKey !== '');
-    const isProduction = process.env.NODE_ENV === 'production';
-    
-    const shouldUseProduction = (
-      config.useProductionCCTP === true || 
-      (hasSigners && hasApiKey && isProduction)
-    );
-
-    return this.create({
-      ...config,
-      useProductionCCTP: shouldUseProduction
-    });
+    return this.create(config);
   }
 
   /**
-   * Validate configuration for production use
+   * Validate configuration for CCTP service
    */
-  static validateProductionConfig(config: CCTPServiceConfig): void {
-    if (!config.useProductionCCTP) {
-      return; // No validation needed for mock service
-    }
-
+  static validateConfig(config: CCTPServiceConfig): void {
     if (!config.apiKey) {
-      throw new Error('Circle API key is required for ProductionCCTPService');
+      throw new Error('Circle API key is required for CCTP service');
     }
 
     if (!config.signers || config.signers.size === 0) {
-      throw new Error('At least one signer is required for ProductionCCTPService');
+      throw new Error('At least one signer is required for CCTP service');
     }
 
     // Validate each signer
@@ -113,7 +88,7 @@ export class CCTPServiceFactory {
       }
     });
 
-    console.log('✅ Production CCTP configuration is valid');
+    console.log('✅ CCTP configuration is valid');
   }
 }
 
@@ -136,14 +111,12 @@ export class CCTPServiceManager {
   initialize(config: CCTPServiceConfig): void {
     this.config = config;
     
-    // Validate configuration if using production
-    if (config.useProductionCCTP) {
-      CCTPServiceFactory.validateProductionConfig(config);
-    }
+    // Validate configuration
+    CCTPServiceFactory.validateConfig(config);
     
     this.currentService = CCTPServiceFactory.create(config);
     
-    console.log(`🚀 CCTP Service initialized (${config.useProductionCCTP ? 'Production' : 'Mock'})`);
+    console.log(`🚀 CCTP Service initialized with Circle CCTP`);
   }
 
   /**
@@ -157,39 +130,17 @@ export class CCTPServiceManager {
   }
 
   /**
-   * Switch between production and mock services
+   * Update signers for the service
    */
-  switchToProduction(signers: Map<ChainId, Signer>): void {
+  updateSigners(signers: Map<ChainId, Signer>): void {
     if (!this.config) {
       throw new Error('Service not initialized');
     }
 
     this.initialize({
       ...this.config,
-      useProductionCCTP: true,
       signers
     });
-  }
-
-  /**
-   * Switch to mock service (useful for testing)
-   */
-  switchToMock(): void {
-    if (!this.config) {
-      throw new Error('Service not initialized');
-    }
-
-    this.initialize({
-      ...this.config,
-      useProductionCCTP: false
-    });
-  }
-
-  /**
-   * Check if currently using production service
-   */
-  isUsingProduction(): boolean {
-    return this.currentService instanceof ProductionCCTPService;
   }
 
   /**

@@ -14,7 +14,8 @@ export class CCTPService {
   async estimateBridgeFee(
     amount: BigNumber,
     fromChain: ChainId,
-    toChain: ChainId
+    toChain: ChainId,
+    useFastTransfer?: boolean
   ): Promise<BigNumber> {
     // For now, return a fixed fee
     // In real implementation, this would call Circle's API

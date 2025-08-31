@@ -11,234 +11,716 @@ import type {
 
 const _abi = [
   {
+    type: "constructor",
     inputs: [
       {
-        internalType: "bytes",
-        name: "_message",
-        type: "bytes",
-      },
-      {
-        internalType: "bytes",
-        name: "_attestation",
-        type: "bytes",
-      },
-    ],
-    name: "receiveMessage",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "success",
-        type: "bool",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "bytes",
-        name: "_message",
-        type: "bytes",
-      },
-      {
-        internalType: "bytes",
-        name: "_attestation",
-        type: "bytes",
-      },
-    ],
-    name: "replaceMessage",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "success",
-        type: "bool",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint32",
-        name: "_destinationDomain",
+        name: "_localDomain",
         type: "uint32",
+        internalType: "uint32",
       },
       {
-        internalType: "bytes32",
-        name: "_recipient",
-        type: "bytes32",
-      },
-      {
-        internalType: "bytes",
-        name: "_messageBody",
-        type: "bytes",
-      },
-    ],
-    name: "sendMessage",
-    outputs: [
-      {
-        internalType: "uint64",
-        name: "",
-        type: "uint64",
+        name: "_version",
+        type: "uint32",
+        internalType: "uint32",
       },
     ],
     stateMutability: "nonpayable",
-    type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "uint32",
-        name: "_destinationDomain",
-        type: "uint32",
-      },
-      {
-        internalType: "bytes32",
-        name: "_recipient",
-        type: "bytes32",
-      },
-      {
-        internalType: "bytes32",
-        name: "_destinationCaller",
-        type: "bytes32",
-      },
-      {
-        internalType: "bytes",
-        name: "_messageBody",
-        type: "bytes",
-      },
-    ],
-    name: "sendMessageWithCaller",
+    type: "function",
+    name: "NONCE_USED",
+    inputs: [],
     outputs: [
       {
-        internalType: "uint64",
-        name: "",
-        type: "uint64",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "bytes",
-        name: "message",
-        type: "bytes",
-      },
-    ],
-    name: "MessageSent",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "caller",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint32",
-        name: "sourceDomain",
-        type: "uint32",
-      },
-      {
-        indexed: true,
-        internalType: "uint64",
-        name: "nonce",
-        type: "uint64",
-      },
-      {
-        indexed: false,
-        internalType: "bytes32",
-        name: "sender",
-        type: "bytes32",
-      },
-      {
-        indexed: false,
-        internalType: "bytes",
-        name: "messageBody",
-        type: "bytes",
-      },
-    ],
-    name: "MessageReceived",
-    type: "event",
-  },
-  {
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "_messageHash",
-        type: "bytes32",
-      },
-    ],
-    name: "usedNonces",
-    outputs: [
-      {
-        internalType: "uint256",
         name: "",
         type: "uint256",
+        internalType: "uint256",
       },
     ],
     stateMutability: "view",
-    type: "function",
   },
   {
+    type: "function",
+    name: "acceptOwnership",
     inputs: [],
-    name: "localDomain",
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "attesterManager",
+    inputs: [],
     outputs: [
       {
-        internalType: "uint32",
         name: "",
-        type: "uint32",
+        type: "address",
+        internalType: "address",
       },
     ],
     stateMutability: "view",
-    type: "function",
   },
   {
-    inputs: [],
-    name: "version",
-    outputs: [
-      {
-        internalType: "uint32",
-        name: "",
-        type: "uint32",
-      },
-    ],
-    stateMutability: "view",
     type: "function",
-  },
-  {
+    name: "disableAttester",
     inputs: [
       {
-        internalType: "bytes",
-        name: "_message",
-        type: "bytes",
-      },
-      {
-        internalType: "bytes",
-        name: "_signature",
-        type: "bytes",
+        name: "attester",
+        type: "address",
+        internalType: "address",
       },
     ],
-    name: "attestationManager",
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "enableAttester",
+    inputs: [
+      {
+        name: "newAttester",
+        type: "address",
+        internalType: "address",
+      },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "getEnabledAttester",
+    inputs: [
+      {
+        name: "index",
+        type: "uint256",
+        internalType: "uint256",
+      },
+    ],
     outputs: [
       {
-        internalType: "bool",
         name: "",
-        type: "bool",
+        type: "address",
+        internalType: "address",
       },
     ],
     stateMutability: "view",
+  },
+  {
     type: "function",
+    name: "getNumEnabledAttesters",
+    inputs: [],
+    outputs: [
+      {
+        name: "",
+        type: "uint256",
+        internalType: "uint256",
+      },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "initialize",
+    inputs: [
+      {
+        name: "owner_",
+        type: "address",
+        internalType: "address",
+      },
+      {
+        name: "pauser_",
+        type: "address",
+        internalType: "address",
+      },
+      {
+        name: "rescuer_",
+        type: "address",
+        internalType: "address",
+      },
+      {
+        name: "attesterManager_",
+        type: "address",
+        internalType: "address",
+      },
+      {
+        name: "attesters_",
+        type: "address[]",
+        internalType: "address[]",
+      },
+      {
+        name: "signatureThreshold_",
+        type: "uint256",
+        internalType: "uint256",
+      },
+      {
+        name: "maxMessageBodySize_",
+        type: "uint256",
+        internalType: "uint256",
+      },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "initializedVersion",
+    inputs: [],
+    outputs: [
+      {
+        name: "",
+        type: "uint64",
+        internalType: "uint64",
+      },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "isEnabledAttester",
+    inputs: [
+      {
+        name: "attester",
+        type: "address",
+        internalType: "address",
+      },
+    ],
+    outputs: [
+      {
+        name: "",
+        type: "bool",
+        internalType: "bool",
+      },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "localDomain",
+    inputs: [],
+    outputs: [
+      {
+        name: "",
+        type: "uint32",
+        internalType: "uint32",
+      },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "maxMessageBodySize",
+    inputs: [],
+    outputs: [
+      {
+        name: "",
+        type: "uint256",
+        internalType: "uint256",
+      },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "owner",
+    inputs: [],
+    outputs: [
+      {
+        name: "",
+        type: "address",
+        internalType: "address",
+      },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "pause",
+    inputs: [],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "paused",
+    inputs: [],
+    outputs: [
+      {
+        name: "",
+        type: "bool",
+        internalType: "bool",
+      },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "pauser",
+    inputs: [],
+    outputs: [
+      {
+        name: "",
+        type: "address",
+        internalType: "address",
+      },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "pendingOwner",
+    inputs: [],
+    outputs: [
+      {
+        name: "",
+        type: "address",
+        internalType: "address",
+      },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "receiveMessage",
+    inputs: [
+      {
+        name: "message",
+        type: "bytes",
+        internalType: "bytes",
+      },
+      {
+        name: "attestation",
+        type: "bytes",
+        internalType: "bytes",
+      },
+    ],
+    outputs: [
+      {
+        name: "success",
+        type: "bool",
+        internalType: "bool",
+      },
+    ],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "rescueERC20",
+    inputs: [
+      {
+        name: "tokenContract",
+        type: "address",
+        internalType: "contract IERC20",
+      },
+      {
+        name: "to",
+        type: "address",
+        internalType: "address",
+      },
+      {
+        name: "amount",
+        type: "uint256",
+        internalType: "uint256",
+      },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "rescuer",
+    inputs: [],
+    outputs: [
+      {
+        name: "",
+        type: "address",
+        internalType: "address",
+      },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "sendMessage",
+    inputs: [
+      {
+        name: "destinationDomain",
+        type: "uint32",
+        internalType: "uint32",
+      },
+      {
+        name: "recipient",
+        type: "bytes32",
+        internalType: "bytes32",
+      },
+      {
+        name: "destinationCaller",
+        type: "bytes32",
+        internalType: "bytes32",
+      },
+      {
+        name: "minFinalityThreshold",
+        type: "uint32",
+        internalType: "uint32",
+      },
+      {
+        name: "messageBody",
+        type: "bytes",
+        internalType: "bytes",
+      },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "setMaxMessageBodySize",
+    inputs: [
+      {
+        name: "newMaxMessageBodySize",
+        type: "uint256",
+        internalType: "uint256",
+      },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "setSignatureThreshold",
+    inputs: [
+      {
+        name: "newSignatureThreshold",
+        type: "uint256",
+        internalType: "uint256",
+      },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "signatureThreshold",
+    inputs: [],
+    outputs: [
+      {
+        name: "",
+        type: "uint256",
+        internalType: "uint256",
+      },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "transferOwnership",
+    inputs: [
+      {
+        name: "newOwner",
+        type: "address",
+        internalType: "address",
+      },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "unpause",
+    inputs: [],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "updateAttesterManager",
+    inputs: [
+      {
+        name: "newAttesterManager",
+        type: "address",
+        internalType: "address",
+      },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "updatePauser",
+    inputs: [
+      {
+        name: "_newPauser",
+        type: "address",
+        internalType: "address",
+      },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "updateRescuer",
+    inputs: [
+      {
+        name: "newRescuer",
+        type: "address",
+        internalType: "address",
+      },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "usedNonces",
+    inputs: [
+      {
+        name: "",
+        type: "bytes32",
+        internalType: "bytes32",
+      },
+    ],
+    outputs: [
+      {
+        name: "",
+        type: "uint256",
+        internalType: "uint256",
+      },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "version",
+    inputs: [],
+    outputs: [
+      {
+        name: "",
+        type: "uint32",
+        internalType: "uint32",
+      },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "event",
+    name: "AttesterDisabled",
+    inputs: [
+      {
+        name: "attester",
+        type: "address",
+        indexed: true,
+        internalType: "address",
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: "event",
+    name: "AttesterEnabled",
+    inputs: [
+      {
+        name: "attester",
+        type: "address",
+        indexed: true,
+        internalType: "address",
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: "event",
+    name: "AttesterManagerUpdated",
+    inputs: [
+      {
+        name: "previousAttesterManager",
+        type: "address",
+        indexed: true,
+        internalType: "address",
+      },
+      {
+        name: "newAttesterManager",
+        type: "address",
+        indexed: true,
+        internalType: "address",
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: "event",
+    name: "Initialized",
+    inputs: [
+      {
+        name: "version",
+        type: "uint64",
+        indexed: false,
+        internalType: "uint64",
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: "event",
+    name: "MaxMessageBodySizeUpdated",
+    inputs: [
+      {
+        name: "newMaxMessageBodySize",
+        type: "uint256",
+        indexed: false,
+        internalType: "uint256",
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: "event",
+    name: "MessageReceived",
+    inputs: [
+      {
+        name: "caller",
+        type: "address",
+        indexed: true,
+        internalType: "address",
+      },
+      {
+        name: "sourceDomain",
+        type: "uint32",
+        indexed: false,
+        internalType: "uint32",
+      },
+      {
+        name: "nonce",
+        type: "bytes32",
+        indexed: true,
+        internalType: "bytes32",
+      },
+      {
+        name: "sender",
+        type: "bytes32",
+        indexed: false,
+        internalType: "bytes32",
+      },
+      {
+        name: "finalityThresholdExecuted",
+        type: "uint32",
+        indexed: true,
+        internalType: "uint32",
+      },
+      {
+        name: "messageBody",
+        type: "bytes",
+        indexed: false,
+        internalType: "bytes",
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: "event",
+    name: "MessageSent",
+    inputs: [
+      {
+        name: "message",
+        type: "bytes",
+        indexed: false,
+        internalType: "bytes",
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: "event",
+    name: "OwnershipTransferStarted",
+    inputs: [
+      {
+        name: "previousOwner",
+        type: "address",
+        indexed: true,
+        internalType: "address",
+      },
+      {
+        name: "newOwner",
+        type: "address",
+        indexed: true,
+        internalType: "address",
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: "event",
+    name: "OwnershipTransferred",
+    inputs: [
+      {
+        name: "previousOwner",
+        type: "address",
+        indexed: true,
+        internalType: "address",
+      },
+      {
+        name: "newOwner",
+        type: "address",
+        indexed: true,
+        internalType: "address",
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: "event",
+    name: "Pause",
+    inputs: [],
+    anonymous: false,
+  },
+  {
+    type: "event",
+    name: "PauserChanged",
+    inputs: [
+      {
+        name: "newAddress",
+        type: "address",
+        indexed: true,
+        internalType: "address",
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: "event",
+    name: "RescuerChanged",
+    inputs: [
+      {
+        name: "newRescuer",
+        type: "address",
+        indexed: true,
+        internalType: "address",
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: "event",
+    name: "SignatureThresholdUpdated",
+    inputs: [
+      {
+        name: "oldSignatureThreshold",
+        type: "uint256",
+        indexed: false,
+        internalType: "uint256",
+      },
+      {
+        name: "newSignatureThreshold",
+        type: "uint256",
+        indexed: false,
+        internalType: "uint256",
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: "event",
+    name: "Unpause",
+    inputs: [],
+    anonymous: false,
   },
 ] as const;
 

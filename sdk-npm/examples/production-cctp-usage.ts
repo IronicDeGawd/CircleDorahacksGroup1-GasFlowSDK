@@ -32,7 +32,6 @@ async function main() {
   const gasFlowSDK = new GasFlowSDK({
     apiKey: process.env.CIRCLE_API_KEY!, // Your Circle API key
     supportedChains: [11155111, 421614, 84532], // Testnets
-    useProductionCCTP: true, // Enable real CCTP contracts
     signers: signers,
     analytics: true
   });
@@ -124,7 +123,6 @@ async function factoryExample() {
   // Start with mock service for testing
   let cctpService = CCTPServiceFactory.create({
     ...config,
-    useProductionCCTP: false
   });
 
   console.log('Using mock service for testing...');
@@ -133,7 +131,6 @@ async function factoryExample() {
   // Switch to production service
   cctpService = CCTPServiceFactory.create({
     ...config,
-    useProductionCCTP: true
   });
 
   console.log('Switching to production service...');

@@ -15,6 +15,7 @@ import { GasEstimator } from '../services/GasEstimator';
 import { CCTPServiceFactory, CCTPService } from '../services/CCTPServiceFactory';
 import { RealPaymasterService } from '../services/RealPaymasterService';
 import { RouteOptimizer, RouteAnalysis } from '../services/RouteOptimizer';
+import { TraditionalExecutionService } from '../services/TraditionalExecutionService';
 import { DEFAULT_SUPPORTED_CHAINS } from '../config/chains';
 
 export class GasFlowSDK {
@@ -22,6 +23,7 @@ export class GasFlowSDK {
   private gasEstimator: GasEstimator;
   private cctpService: CCTPService;
   private paymasterService: RealPaymasterService;
+  private traditionalExecutionService: TraditionalExecutionService;
   private routeOptimizer: RouteOptimizer;
   private eventListeners: Map<string, EventListener[]> = new Map();
   
@@ -40,10 +42,10 @@ export class GasFlowSDK {
     this.cctpService = CCTPServiceFactory.create({
       apiKey: this.config.apiKey,
       useTestnet,
-      useProductionCCTP: this.config.useProductionCCTP || false,
       signers: this.config.signers
     });
     this.paymasterService = new RealPaymasterService(useTestnet, this.config.alchemyApiKey);
+    this.traditionalExecutionService = new TraditionalExecutionService(useTestnet);
     this.routeOptimizer = new RouteOptimizer(
       this.balanceManager,
       this.gasEstimator,
@@ -65,7 +67,8 @@ export class GasFlowSDK {
   async execute(
     transaction: GasFlowTransaction,
     userAddress: string,
-    userPrivateKey?: string
+    userPrivateKey?: string,
+    signer?: any
   ): Promise<GasFlowResult> {
     try {
       this.emitUpdate({
@@ -109,7 +112,7 @@ export class GasFlowSDK {
           fromChain: bestRoute.payFromChain,
           toChain: bestRoute.executeOnChain,
           recipient: userAddress,
-          useFastTransfer: true, // Prefer Fast Transfer
+          useFastTransfer: false, // Use Standard Transfer by default
         });
 
         bridgeTransactionHash = bridgeResult.transactionHash;
@@ -133,14 +136,22 @@ export class GasFlowSDK {
       let transactionHash: string;
       let gasUsed: BigNumber;
 
-      if (this.paymasterService.isPaymasterAvailable(bestRoute.executeOnChain)) {
-        // Use Paymaster for USDC gas payment
-        console.log('Executing with Paymaster');
-        
-        if (!userPrivateKey) {
-          throw new Error('User private key required for Paymaster integration');
-        }
+      // Determine execution mode based on available parameters
+      const hasPrivateKey = !!userPrivateKey;
+      const hasSigner = !!signer;
+      const paymasterAvailable = this.paymasterService.isPaymasterAvailable(bestRoute.executeOnChain);
 
+      console.log('Execution mode analysis:', {
+        hasPrivateKey,
+        hasSigner,
+        paymasterAvailable,
+        executeOnChain: bestRoute.executeOnChain
+      });
+
+      if (paymasterAvailable && hasPrivateKey) {
+        // Use Paymaster for USDC gas payment with private key
+        console.log('🏦 Executing with Paymaster (private key mode)');
+        
         const userOpResult = await this.paymasterService.buildUserOperation(
           transaction,
           bestRoute.executeOnChain,
@@ -164,9 +175,39 @@ export class GasFlowSDK {
 
         transactionHash = receipt.transactionHash;
         gasUsed = BigNumber.from(receipt.gasUsed?.toString() || '0');
+      } else if (hasSigner) {
+        // Use Traditional execution with signer (MetaMask compatible)
+        console.log('🔗 Executing with Traditional gas payment (signer mode)');
+        
+        // Get signer for the execution chain
+        let executionSigner = signer;
+        
+        // If signer is for different chain, try to get correct signer from CCTP service
+        if (this.cctpService && 'getSigner' in this.cctpService) {
+          try {
+            executionSigner = (this.cctpService as any).getSigner(bestRoute.executeOnChain);
+            console.log(`✅ Using chain-specific signer for chain ${bestRoute.executeOnChain}`);
+          } catch (error) {
+            console.log(`⚠️ Using provided signer for chain ${bestRoute.executeOnChain}:`, error);
+            executionSigner = signer;
+          }
+        }
+        
+        const executionResult = await this.traditionalExecutionService.executeTransaction(
+          transaction,
+          executionSigner,
+          bestRoute.executeOnChain
+        );
+
+        transactionHash = executionResult.transactionHash;
+        gasUsed = executionResult.gasUsed;
       } else {
-        // Fallback to traditional gas payment (not implemented in this demo)
-        throw new Error(`Paymaster not available on chain ${bestRoute.executeOnChain}`);
+        // No valid execution method available
+        const errorMessage = paymasterAvailable 
+          ? 'Paymaster available but requires private key. For MetaMask integration, provide signer parameter.'
+          : 'No execution method available. Provide either private key for paymaster or signer for traditional execution.';
+        
+        throw new Error(errorMessage);
       }
 
       // Step 4: Calculate final costs and savings

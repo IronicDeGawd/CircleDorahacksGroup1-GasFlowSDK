@@ -19,17 +19,17 @@ export type {
   ChainConfig,
   TransactionStatus,
   TransactionUpdate,
-  EventListener
+  EventListener,
+  ExecutionMode
 } from './types';
 
 // Service exports (for advanced usage)
 export { BalanceManager } from './services/BalanceManager';
 export { GasEstimator } from './services/GasEstimator';
-export { SimpleCCTPService } from './services/SimpleCCTPService';
 export { ProductionCCTPService } from './services/ProductionCCTPService';
 export { CCTPServiceFactory, CCTPServiceManager } from './services/CCTPServiceFactory';
-// export { WormholeCCTPService } from './services/WormholeCCTPService'; // TODO: Fix Wormhole SDK integration
 export { RealPaymasterService } from './services/RealPaymasterService';
+export { TraditionalExecutionService } from './services/TraditionalExecutionService';
 export { RouteOptimizer } from './services/RouteOptimizer';
 
 // Configuration exports
