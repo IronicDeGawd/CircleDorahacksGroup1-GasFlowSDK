@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Zap } from "lucide-react";
+import { ThemeToggle } from "./ThemeToggle";
 
 const Header = () => {
   return (
@@ -46,9 +47,12 @@ const Header = () => {
           </NavLink>
         </nav>
 
-        <Button variant="outline" size="sm" className="glass-effect">
-          Get Started
-        </Button>
+        <div className="flex items-center space-x-3">
+          <ThemeToggle />
+          <Button variant="outline" size="sm" className="glass-effect">
+            Get Started
+          </Button>
+        </div>
       </div>
     </header>
   );

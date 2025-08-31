@@ -1,182 +1,408 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Code, Zap, Shield, Globe, Download, Star, GitBranch, Coins, ArrowUpDown } from "lucide-react";
+import {
+  ArrowRight,
+  Code,
+  Zap,
+  Shield,
+  Globe,
+  Download,
+  Star,
+  GitBranch,
+  Coins,
+  ArrowUpDown,
+  Play,
+  Copy,
+  ExternalLink,
+  TrendingUp,
+  Activity,
+  CheckCircle,
+  Users,
+  MessageCircle,
+  Mail,
+  Calendar,
+  Target,
+  Gift,
+  Lightbulb,
+} from "lucide-react";
 import { Link } from "react-router-dom";
+import { useState } from "react";
 
 const Landing = () => {
-  const features = [
-    {
-      icon: <Zap className="h-6 w-6" />,
-      title: "Cross-Chain Gas",
-      description: "Seamlessly handle gas payments across multiple blockchain networks"
-    },
-    {
-      icon: <Coins className="h-6 w-6" />,
-      title: "Smart Paymaster",
-      description: "Intelligent gas sponsorship with flexible payment options"
-    },
-    {
-      icon: <ArrowUpDown className="h-6 w-6" />,
-      title: "Route Optimization",
-      description: "Find the most cost-effective paths for cross-chain transactions"
-    },
-    {
-      icon: <Shield className="h-6 w-6" />,
-      title: "Secure & Reliable",
-      description: "Enterprise-grade security with audited smart contracts"
-    }
+  const [activeDemo, setActiveDemo] = useState("gas-estimation");
+  const [terminalOutput] = useState([
+    "> Transaction: 0x1a2b3c4d5e6f...",
+    "> Saved: $2.45 USDC",
+    "> Execution time: 1.2s",
+    "> Status: ✅ Success"
+  ]);
+
+  const securityFeatures = [
+    { icon: <CheckCircle className="h-4 w-4" />, label: "Audited Contracts" },
+    { icon: <Shield className="h-4 w-4" />, label: "Multi-Sig Protection" },
+    { icon: <Activity className="h-4 w-4" />, label: "99.9% Uptime" },
+    { icon: <TrendingUp className="h-4 w-4" />, label: "Real-time Monitoring" }
+  ];
+
+  const networkStatus = [
+    { name: "Ethereum", status: "🟢", gas: "12 gwei" },
+    { name: "Arbitrum", status: "🟢", gas: "0.1 gwei" },
+    { name: "Base", status: "🟢", gas: "0.05 gwei" }
+  ];
+
+  const demoFeatures = [
+    { id: "gas-estimation", label: "⚡ Gas Estimation" },
+    { id: "chain-bridge", label: "🔗 Chain Bridge" },
+    { id: "cost-calculator", label: "💰 Cost Calculator" },
+    { id: "analytics", label: "📈 Analytics" }
   ];
 
   const stats = [
     { label: "Networks Supported", value: "5+" },
     { label: "Circle CCTP Integration", value: "V2" },
-    { label: "Production Ready", value: "✓" },
-    { label: "Demo Available", value: "Live" }
+    { label: "Production Ready", value: "✓" }
   ];
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="pt-32 pb-20 px-6 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-hero opacity-10"></div>
-        <div className="container mx-auto text-center relative z-10">
-          <Badge variant="secondary" className="mb-6 bg-primary/10 text-primary border-primary/20">
-            <Star className="h-3 w-3 mr-1" />
-            Circle CCTP V2 Integration Complete
-          </Badge>
-          
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 text-gradient leading-tight">
-            GasFlow SDK
-          </h1>
-          
-          <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
-            Universal cross-chain gas payments powered by Circle CCTP V2 and Paymaster integration. 
-            Pay for gas on any chain using USDC from any other supported chain.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <Button size="lg" className="bg-gradient-primary hover:shadow-glow transition-smooth">
-              Get Started
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-            
-            <Link to="/documentation">
-              <Button variant="outline" size="lg" className="glass-effect">
-                <Code className="mr-2 h-5 w-5" />
-                View Documentation
-              </Button>
-            </Link>
-          </div>
+      {/* Asymmetrical Hero Section */}
+      <section className="pt-32 pb-20 px-6 relative overflow-hidden bg-gradient-to-br from-background via-muted/20 to-background">
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-accent/5"></div>
+        <div className="container mx-auto relative z-10">
+          <div className="grid lg:grid-cols-2 gap-12 items-start">
+            {/* Left Column - Main Content */}
+            <div className="space-y-8">
+              <h1 className="text-5xl md:text-7xl font-bold text-gradient leading-tight">
+                GasFlow SDK
+              </h1>
+              
+              <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed">
+                Universal cross-chain gas payments powered by Circle CCTP V2. 
+                Pay gas on any chain using USDC from anywhere.
+              </p>
 
-          {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-2xl mx-auto">
-            {stats.map((stat, index) => (
-              <div key={index} className="text-center">
-                <div className="text-2xl md:text-3xl font-bold text-gradient mb-1">
-                  {stat.value}
-                </div>
-                <div className="text-sm text-muted-foreground">{stat.label}</div>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button
+                  size="lg"
+                  className="bg-gradient-primary hover:shadow-glow transition-smooth"
+                >
+                  Get Started
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+
+                <Link to="/documentation">
+                  <Button variant="outline" size="lg" className="glass-effect">
+                    <Code className="mr-2 h-5 w-5" />
+                    Docs
+                  </Button>
+                </Link>
               </div>
-            ))}
+            </div>
+
+            {/* Right Column - Floating Interactive Elements */}
+            <div className="space-y-6">
+              <Badge
+                variant="secondary"
+                className="bg-primary/10 text-primary border-primary/20 w-fit"
+              >
+                <Star className="h-3 w-3 mr-1" />
+                Circle CCTP V2 Complete
+              </Badge>
+
+              {/* Live Demo Card */}
+              <Card className="p-4 glass-effect hover:shadow-soft transition-smooth">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-sm font-medium">🔗 Live Demo</span>
+                  <Button size="sm" variant="ghost">
+                    <ExternalLink className="h-4 w-4" />
+                    Try Interactive Example
+                  </Button>
+                </div>
+              </Card>
+
+              {/* Stats Grid */}
+              <div className="grid grid-cols-3 gap-4">
+                {stats.map((stat, index) => (
+                  <Card key={index} className="p-4 text-center glass-effect">
+                    <div className="text-lg font-bold text-gradient mb-1">
+                      {stat.value}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {stat.label}
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
+      {/* Bento Grid Features Section */}
       <section className="py-20 px-6 bg-muted/30">
         <div className="container mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-gradient">
-              Why Choose GasFlow?
-            </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Built for blockchain developers. Every feature designed to make cross-chain gas management effortless.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {features.map((feature, index) => (
-              <Card key={index} className="p-6 glass-effect hover:shadow-soft transition-smooth">
-                <div className="bg-gradient-secondary p-3 rounded-xl w-fit mb-4 shadow-soft">
-                  {feature.icon}
+          <div className="bento-grid gap-6">
+            {/* Cross-Chain Gas - Large Card */}
+            <Card className="bento-item-large p-8 glass-effect hover:shadow-soft transition-smooth">
+              <div className="flex items-start justify-between mb-6">
+                <div className="bg-gradient-secondary p-3 rounded-xl shadow-soft">
+                  <Zap className="h-6 w-6" />
                 </div>
-                <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-                <p className="text-muted-foreground">{feature.description}</p>
-              </Card>
-            ))}
+                <Badge className="bg-green-500/10 text-green-600 border-green-500/20">
+                  💰 $1.20 saved
+                </Badge>
+              </div>
+              <h3 className="text-2xl font-semibold mb-3">Cross-Chain Gas</h3>
+              <div className="bg-muted/50 p-4 rounded-lg mb-4 font-mono text-sm">
+                ETH → USDC → ARB
+              </div>
+              <p className="text-muted-foreground mb-4">
+                Seamlessly handle gas payments across multiple blockchain networks
+              </p>
+            </Card>
+
+            {/* Smart Paymaster - Medium Card */}
+            <Card className="bento-item-medium p-6 glass-effect hover:shadow-soft transition-smooth">
+              <div className="bg-gradient-secondary p-3 rounded-xl w-fit mb-4 shadow-soft">
+                <Coins className="h-6 w-6" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Smart Paymaster</h3>
+              <p className="text-muted-foreground mb-4">
+                Intelligent gas sponsorship with flexible payment options
+              </p>
+              <Button size="sm" className="w-full">
+                💳 Pay Now
+              </Button>
+            </Card>
+
+            {/* Route Optimization - Medium Card */}
+            <Card className="bento-item-medium p-6 glass-effect hover:shadow-soft transition-smooth">
+              <div className="bg-gradient-secondary p-3 rounded-xl w-fit mb-4 shadow-soft">
+                <ArrowUpDown className="h-6 w-6" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Route Optimization</h3>
+              <div className="space-y-2 mb-4">
+                <div className="flex justify-between text-sm">
+                  <span>Path A:</span>
+                  <span>$2.50</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span>Path B:</span>
+                  <span>$3.80</span>
+                </div>
+                <div className="flex justify-between text-sm font-semibold text-green-600">
+                  <span>✅ Optimal:</span>
+                  <span>$1.20</span>
+                </div>
+              </div>
+              <p className="text-muted-foreground text-sm">
+                Find the most cost-effective paths for cross-chain transactions
+              </p>
+            </Card>
+
+            {/* Enterprise Security - Full Width */}
+            <Card className="bento-item-full p-6 glass-effect hover:shadow-soft transition-smooth">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="bg-gradient-secondary p-3 rounded-xl shadow-soft">
+                  <Shield className="h-6 w-6" />
+                </div>
+                <h3 className="text-xl font-semibold">Enterprise Security</h3>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {securityFeatures.map((feature, index) => (
+                  <div key={index} className="flex items-center gap-2 p-3 bg-muted/30 rounded-lg">
+                    {feature.icon}
+                    <span className="text-sm font-medium">{feature.label}</span>
+                  </div>
+                ))}
+              </div>
+            </Card>
           </div>
         </div>
       </section>
 
-      {/* Code Example Section */}
+      {/* Isolated Components Showcase */}
       <section className="py-20 px-6">
         <div className="container mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-4 text-gradient">
-              Simple. Powerful. Elegant.
+              Interactive Code Experience
             </h2>
             <p className="text-xl text-muted-foreground">
-              Get started with just a few lines of code
+              See the SDK in action with live examples
             </p>
           </div>
 
-          <Card className="max-w-3xl mx-auto p-8 bg-card/95 shadow-window">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center space-x-2">
-                <GitBranch className="h-5 w-5 text-primary" />
-                <span className="font-mono text-sm text-muted-foreground">quickstart.js</span>
+          <div className="grid lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
+            {/* Code Editor */}
+            <Card className="p-6 bg-card/95 shadow-window">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center space-x-2">
+                  <GitBranch className="h-5 w-5 text-primary" />
+                  <span className="font-mono text-sm text-muted-foreground">
+                    quickstart.js
+                  </span>
+                </div>
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm">
+                    <Copy className="mr-2 h-4 w-4" />
+                    Copy
+                  </Button>
+                  <Button size="sm" className="bg-green-600 hover:bg-green-700">
+                    <Play className="mr-2 h-4 w-4" />
+                    Run
+                  </Button>
+                </div>
               </div>
-              <Button variant="outline" size="sm">
-                <Download className="mr-2 h-4 w-4" />
-                Copy
-              </Button>
-            </div>
-            
-            <pre className="text-sm font-mono text-foreground bg-muted/50 p-4 rounded-lg overflow-x-auto">
+
+              <pre className="text-sm font-mono text-foreground bg-muted/50 p-4 rounded-lg overflow-x-auto mb-4">
 {`import { GasFlowSDK } from '@gasflow/sdk';
 
-const gasFlow = new GasFlowSDK({
-  apiKey: process.env.CIRCLE_API_KEY,
-  supportedChains: [11155111, 421614, 84532], // Testnet chains
-  useProductionCCTP: true,  // Enable real Circle contracts
-  signers: signerMap
-});
-
-// Execute cross-chain transaction with automatic routing
 const result = await gasFlow.execute({
-  to: '0x742C7f0f6b6d43A35556D5F7FAF7a93AC8c3b7B8',
-  executeOn: 421614,        // Arbitrum Sepolia
-  payFromChain: 11155111,   // Ethereum Sepolia
-  urgency: 'medium'
-}, userAddress);
+  executeOn: 421614,
+  payFromChain: 11155111
+});`}
+              </pre>
 
-console.log(\`Transaction: \${result.transactionHash}\`);
-console.log(\`Saved: $\${result.estimatedSavings} USDC\`);`}
-            </pre>
-          </Card>
+              {/* Network Status */}
+              <Card className="p-4 bg-muted/30">
+                <h4 className="font-semibold mb-3 flex items-center gap-2">
+                  <Activity className="h-4 w-4" />
+                  Network Status
+                </h4>
+                <div className="space-y-2">
+                  {networkStatus.map((network, index) => (
+                    <div key={index} className="flex justify-between text-sm">
+                      <span>{network.name}: {network.status}</span>
+                      <span>{network.gas}</span>
+                    </div>
+                  ))}
+                </div>
+                <Button size="sm" variant="outline" className="w-full mt-3">
+                  📡 Real-time Updates
+                </Button>
+              </Card>
+            </Card>
+
+            {/* Live Output & Features */}
+            <div className="space-y-6">
+              {/* Terminal Output */}
+              <Card className="p-6 bg-card/95 shadow-window">
+                <h4 className="font-semibold mb-4 flex items-center gap-2">
+                  📱 Live Terminal Output
+                </h4>
+                <div className="bg-black text-green-400 p-4 rounded-lg font-mono text-sm space-y-1">
+                  {terminalOutput.map((line, index) => (
+                    <div key={index}>{line}</div>
+                  ))}
+                </div>
+                <Button size="sm" variant="outline" className="w-full mt-4">
+                  🔄 Try Another Example
+                </Button>
+              </Card>
+
+              {/* SDK Features Preview */}
+              <Card className="p-6 bg-card/95 shadow-window">
+                <h4 className="font-semibold mb-4 flex items-center gap-2">
+                  <Target className="h-4 w-4" />
+                  SDK Features Preview
+                </h4>
+                <div className="grid grid-cols-2 gap-2 mb-4">
+                  {demoFeatures.map((feature) => (
+                    <Button
+                      key={feature.id}
+                      size="sm"
+                      variant={activeDemo === feature.id ? "default" : "outline"}
+                      onClick={() => setActiveDemo(feature.id)}
+                      className="text-xs"
+                    >
+                      {feature.label}
+                    </Button>
+                  ))}
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Click any feature to see it in action
+                </p>
+              </Card>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 px-6 bg-gradient-hero relative overflow-hidden">
-        <div className="absolute inset-0 bg-background/80"></div>
-        <div className="container mx-auto text-center relative z-10">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gradient">
-            Ready to Optimize Your Gas?
-          </h2>
-          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Experience the future of cross-chain gas payments with Circle CCTP V2 integration.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-gradient-primary hover:shadow-glow transition-smooth">
-              Start Free Trial
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-            <Button variant="outline" size="lg" className="glass-effect">
-              Schedule Demo
-            </Button>
-          </div>
+      {/* Floating CTA Section */}
+      <section className="py-20 px-6 bg-gradient-to-br from-primary/10 via-accent/5 to-tertiary/10 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/90 to-background/95"></div>
+        <div className="container mx-auto relative z-10">
+          <Card className="p-8 glass-effect shadow-window max-w-4xl mx-auto">
+            <div className="text-center mb-8">
+              <h2 className="text-4xl md:text-5xl font-bold mb-4 text-gradient">
+                Ready to Optimize Your Gas?
+              </h2>
+              <p className="text-xl text-muted-foreground">
+                Experience the future of cross-chain gas payments with Circle CCTP
+              </p>
+            </div>
+            
+            <div className="grid md:grid-cols-3 gap-6">
+              {/* Start Free Trial */}
+              <Card className="p-6 text-center glass-effect">
+                <Button
+                  size="lg"
+                  className="bg-gradient-primary hover:shadow-glow transition-smooth w-full mb-4"
+                >
+                  Start Free Trial
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+                <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                  <Gift className="h-4 w-4" />
+                  No credit card needed
+                </div>
+              </Card>
+
+              {/* Schedule Demo */}
+              <Card className="p-6 text-center glass-effect">
+                <Button variant="outline" size="lg" className="w-full mb-4">
+                  Schedule Demo
+                </Button>
+                <div className="space-y-1 text-sm text-muted-foreground">
+                  <div className="flex items-center justify-center gap-2">
+                    <Calendar className="h-4 w-4" />
+                    15 min call
+                  </div>
+                  <div className="flex items-center justify-center gap-2">
+                    <Target className="h-4 w-4" />
+                    Custom demo
+                  </div>
+                  <div className="flex items-center justify-center gap-2">
+                    <Lightbulb className="h-4 w-4" />
+                    Expert tips
+                  </div>
+                </div>
+              </Card>
+
+              {/* Community */}
+              <Card className="p-6 text-center glass-effect">
+                <div className="flex items-center justify-center gap-2 mb-4">
+                  <Users className="h-5 w-5" />
+                  <span className="font-semibold">Join 500+ developers</span>
+                </div>
+                <p className="text-sm text-muted-foreground mb-4">
+                  already building with GasFlow SDK
+                </p>
+                <div className="flex gap-2">
+                  <Button size="sm" variant="outline" className="flex-1">
+                    <MessageCircle className="mr-1 h-4 w-4" />
+                    Discord
+                  </Button>
+                  <Button size="sm" variant="outline" className="flex-1">
+                    <Mail className="mr-1 h-4 w-4" />
+                    Newsletter
+                  </Button>
+                </div>
+              </Card>
+            </div>
+          </Card>
         </div>
       </section>
     </div>

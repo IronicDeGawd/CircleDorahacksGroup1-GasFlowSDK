@@ -135,12 +135,27 @@ const DraggableWindow: React.FC<DraggableWindowProps> = ({
     }
   };
 
+  // Define drag boundaries to prevent window from going behind navigation
+  const getDragBounds = () => {
+    const navigationHeight = 64; // Height of the top navigation bar
+    const sidebarWidth = window.innerWidth < 768 ? 0 : (window.innerWidth < 1280 ? 320 : 384); // 80, 320, 384 from sidebar widths
+    const margin = 20; // Minimum margin from edges
+    
+    return {
+      left: -(size.width - 100), // Allow partial hiding on the left, but keep 100px visible
+      top: navigationHeight + margin, // Prevent going behind navigation
+      right: window.innerWidth - sidebarWidth - 100, // Allow partial hiding on the right, but keep 100px visible
+      bottom: window.innerHeight - 100, // Allow partial hiding at bottom, but keep title bar visible
+    };
+  };
+
   return (
     <Draggable
       handle=".drag-handle"
       defaultPosition={initialPosition}
       disabled={isMaximized || isMobile}
       onStart={() => onFocus(id)}
+      bounds={getDragBounds()}
     >
       <Card 
         ref={windowRef}

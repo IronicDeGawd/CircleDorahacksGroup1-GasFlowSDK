@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
 import DraggableWindow from "@/components/DraggableWindow";
+import { DotPattern } from "@/components/magicui/dot-pattern";
 import {
   FileText,
   Code2,
@@ -74,20 +75,48 @@ const Documentation = () => {
             <h4 className="font-semibold mb-2">Description</h4>
             <p className="text-sm text-muted-foreground mb-4">
               Initialize a new GasFlow SDK instance with Circle API integration
-              and cross-chain capabilities.
+              and cross-chain capabilities. Works in both mock mode
+              (development) and production mode (real CCTP).
             </p>
           </div>
           <div>
-            <h4 className="font-semibold mb-2">Syntax</h4>
+            <h4 className="font-semibold mb-2">Basic Setup (Mock Mode)</h4>
             <pre className="text-xs bg-muted p-3 rounded font-mono overflow-x-auto">
               {`import { GasFlowSDK } from '@gasflow/sdk';
 
+// Mock mode for development (no API key needed)
 const gasFlow = new GasFlowSDK({
-  apiKey: 'your-circle-api-key',
+  apiKey: 'demo_mode',
   supportedChains: [11155111, 421614, 84532, 43113, 80002],
-  useProductionCCTP: true,  // Enable real Circle contracts
-  signers: signerMap        // Wallet signers for each chain
+  useProductionCCTP: false,  // Uses simulated CCTP
 });`}
+            </pre>
+          </div>
+          <div>
+            <h4 className="font-semibold mb-2">Production Setup (Real CCTP)</h4>
+            <pre className="text-xs bg-muted p-3 rounded font-mono overflow-x-auto">
+              {`// Production mode with real Circle contracts
+const gasFlow = new GasFlowSDK({
+  apiKey: process.env.CIRCLE_API_KEY,
+  supportedChains: [11155111, 421614, 84532, 43113, 80002],
+  useProductionCCTP: true,   // Uses real Circle CCTP contracts
+  signers: signerMap         // Optional: Wallet signers for each chain
+});`}
+            </pre>
+          </div>
+          <div>
+            <h4 className="font-semibold mb-2">Environment Configuration</h4>
+            <pre className="text-xs bg-muted p-3 rounded font-mono overflow-x-auto">
+              {`# .env file setup
+VITE_CIRCLE_API_KEY=your_circle_api_key_from_developers.circle.com
+CIRCLE_ENVIRONMENT=testnet
+GASFLOW_SUPPORTED_CHAINS=11155111,421614,84532,43113,80002
+
+# Optional: RPC endpoints (SDK has defaults)
+RPC_URL_ETHEREUM_SEPOLIA=https://sepolia.infura.io/v3/YOUR_KEY
+RPC_URL_ARBITRUM_SEPOLIA=https://sepolia-rollup.arbitrum.io/rpc
+# Required: Alchemy API Key for Paymaster functionality
+ALCHEMY_API_KEY=your_alchemy_api_key_here`}
             </pre>
           </div>
           <div>
@@ -95,23 +124,26 @@ const gasFlow = new GasFlowSDK({
             <ul className="text-sm space-y-2">
               <li>
                 <code className="text-xs bg-muted px-1 rounded">apiKey</code> -
-                Your Circle API key from developers.circle.com
+                Circle API key from developers.circle.com (or 'demo_mode' for
+                development)
               </li>
               <li>
                 <code className="text-xs bg-muted px-1 rounded">
                   supportedChains
                 </code>{" "}
-                - Array of chain IDs (testnet or mainnet)
+                - Array of chain IDs: [11155111, 421614, 84532, 43113, 80002]
+                for testnets
               </li>
               <li>
                 <code className="text-xs bg-muted px-1 rounded">
                   useProductionCCTP
                 </code>{" "}
-                - Enable real Circle CCTP contracts
+                - true for real Circle contracts, false for mock/demo mode
               </li>
               <li>
                 <code className="text-xs bg-muted px-1 rounded">signers</code> -
-                Map of wallet signers for transaction signing
+                Optional Map of wallet signers for each chain (for server-side
+                usage)
               </li>
             </ul>
           </div>
@@ -136,7 +168,7 @@ const gasFlow = new GasFlowSDK({
             <h4 className="font-semibold mb-2">Example</h4>
             <pre className="text-xs bg-muted p-3 rounded font-mono overflow-x-auto">
               {`const analysis = await gasFlow.estimateTransaction({
-  to: '0x742C7f0f6b6d43A35556D5F7FAF7a93AC8c3b7B8',
+  to: '0x1A00D9a88fC5ccF7a52E268307F98739f770A956',
   data: '0x',
   executeOn: 'optimal',  // or specific chain ID
   payFromChain: 'auto',  // or specific chain ID
@@ -176,7 +208,7 @@ console.log(\`Total cost: \${analysis.bestRoute.totalCost} USDC\`);`}
             <h4 className="font-semibold mb-2">Usage</h4>
             <pre className="text-xs bg-muted p-3 rounded font-mono overflow-x-auto">
               {`const result = await gasFlow.execute({
-  to: '0x742C7f0f6b6d43A35556D5F7FAF7a93AC8c3b7B8',
+  to: '0x1A00D9a88fC5ccF7a52E268307F98739f770A956',
   data: '0x',
   executeOn: 421614,    // Arbitrum Sepolia
   payFromChain: 11155111, // Ethereum Sepolia
@@ -393,9 +425,140 @@ const supported = isCCTPSupported(11155111); // true`}
         </div>
       ),
     },
+    {
+      name: "Environment Setup",
+      icon: <Settings className="h-4 w-4" />,
+      category: "Setup",
+      description: "Complete environment configuration guide for GasFlow SDK",
+      content: (
+        <div className="space-y-4">
+          <div>
+            <h4 className="font-semibold mb-2">Getting Started</h4>
+            <p className="text-sm text-muted-foreground mb-4">
+              Follow this guide to set up your development environment for both
+              mock testing and production use.
+            </p>
+          </div>
+          <div>
+            <h4 className="font-semibold mb-2">1. Installation</h4>
+            <pre className="text-xs bg-muted p-3 rounded font-mono overflow-x-auto">
+              {`npm install @gasflow/sdk ethers
+# or
+yarn add @gasflow/sdk ethers
+# or
+bun add @gasflow/sdk ethers`}
+            </pre>
+          </div>
+          <div>
+            <h4 className="font-semibold mb-2">2. Circle API Setup</h4>
+            <div className="text-sm space-y-2">
+              <p>For production mode, you need a Circle API key:</p>
+              <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
+                <li>
+                  Visit{" "}
+                  <a
+                    href="https://developers.circle.com"
+                    target="_blank"
+                    className="text-primary hover:underline"
+                  >
+                    developers.circle.com
+                  </a>
+                </li>
+                <li>Create an account and verify your email</li>
+                <li>Navigate to "API Keys" and create a new key</li>
+                <li>Select "CCTP" and "Paymaster" permissions</li>
+                <li>Copy your API key (format: key:entity:secret)</li>
+              </ol>
+            </div>
+          </div>
+          <div>
+            <h4 className="font-semibold mb-2">3. Environment Variables</h4>
+            <pre className="text-xs bg-muted p-3 rounded font-mono overflow-x-auto">
+              {`# Required for production mode
+VITE_CIRCLE_API_KEY=your_api_key:entity_id:secret
+
+# Chain configuration
+GASFLOW_SUPPORTED_CHAINS=11155111,421614,84532,43113,80002
+CIRCLE_ENVIRONMENT=testnet
+
+# Optional: Custom RPC endpoints
+RPC_URL_ETHEREUM_SEPOLIA=https://sepolia.infura.io/v3/YOUR_KEY
+RPC_URL_ARBITRUM_SEPOLIA=https://sepolia-rollup.arbitrum.io/rpc
+RPC_URL_BASE_SEPOLIA=https://sepolia.base.org
+
+# Required: Alchemy API Key for Paymaster functionality
+ALCHEMY_API_KEY=your_alchemy_api_key_here
+# Bundler endpoints (Alchemy - SDK default)
+BUNDLER_URL_ETHEREUM_SEPOLIA=https://eth-sepolia.g.alchemy.com/v2/YOUR_ALCHEMY_KEY
+BUNDLER_URL_ARBITRUM_SEPOLIA=https://arb-sepolia.g.alchemy.com/v2/YOUR_ALCHEMY_KEY
+BUNDLER_URL_BASE_SEPOLIA=https://base-sepolia.g.alchemy.com/v2/YOUR_ALCHEMY_KEY`}
+            </pre>
+          </div>
+          <div>
+            <h4 className="font-semibold mb-2">4. Testnet Tokens</h4>
+            <div className="text-sm space-y-2">
+              <p>For testing with real contracts:</p>
+              <ul className="list-disc list-inside space-y-1 text-muted-foreground">
+                <li>Get testnet ETH from chain faucets</li>
+                <li>
+                  Get testnet USDC from{" "}
+                  <a
+                    href="https://faucet.circle.com"
+                    target="_blank"
+                    className="text-primary hover:underline"
+                  >
+                    faucet.circle.com
+                  </a>
+                </li>
+                <li>
+                  Ensure you have tokens on multiple chains to test bridging
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div>
+            <h4 className="font-semibold mb-2">5. Development vs Production</h4>
+            <div className="text-sm space-y-2">
+              <div className="p-2 bg-blue-50 dark:bg-blue-900/20 rounded">
+                <p className="font-medium text-blue-800 dark:text-blue-200">
+                  Development Mode
+                </p>
+                <p className="text-blue-700 dark:text-blue-300 text-xs">
+                  No API key required, uses simulated CCTP and mock data
+                </p>
+              </div>
+              <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded">
+                <p className="font-medium text-green-800 dark:text-green-200">
+                  Production Mode
+                </p>
+                <p className="text-green-700 dark:text-green-300 text-xs">
+                  Requires Circle API key, uses real Circle contracts and CCTP
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      ),
+    },
   ];
 
   const openWindow = (apiFunction: APIFunction) => {
+    // Check if window for this function already exists
+    const existingWindow = openWindows.find(
+      (window) => window.title === apiFunction.name
+    );
+
+    if (existingWindow) {
+      // If window exists, bring it to front and focus it
+      setFocusedWindow(existingWindow.id);
+
+      // Close sidebar on mobile after focusing window
+      if (isMobile) {
+        setSidebarOpen(false);
+      }
+      return;
+    }
+
     const windowId = `window-${windowCounter}`;
 
     // On mobile, open windows fullscreen from top-left
@@ -434,7 +597,16 @@ const supported = isCCTPSupported(11155111); // true`}
   };
 
   const getWindowZIndex = (windowId: string) => {
-    return focusedWindow === windowId ? 1000 : 999;
+    const baseZIndex = 800;
+    const focusedZIndex = baseZIndex + 100;
+
+    if (focusedWindow === windowId) {
+      return focusedZIndex;
+    }
+
+    // Give each window a unique z-index based on order, but keep focused window highest
+    const windowIndex = openWindows.findIndex((w) => w.id === windowId);
+    return baseZIndex + windowIndex;
   };
 
   const convertJSXToMarkdown = (content: React.ReactNode): string => {
@@ -551,7 +723,17 @@ const supported = isCCTPSupported(11155111); // true`}
   }, {} as Record<string, APIFunction[]>);
 
   return (
-    <div className="flex h-screen pt-16 bg-gradient-to-br from-background via-muted/10 to-accent/5">
+    <div className="flex h-screen pt-16 bg-gradient-to-br from-background via-muted/10 to-accent/5 relative overflow-hidden">
+      {/* Dot Pattern Background */}
+      <DotPattern
+        className="opacity-30 dark:opacity-20"
+        width={20}
+        height={20}
+        cx={1}
+        cy={1}
+        cr={1}
+      />
+
       {/* Mobile Menu Button */}
       {isMobile && !sidebarOpen && (
         <Button
@@ -569,9 +751,10 @@ const supported = isCCTPSupported(11155111); // true`}
         className={`
         ${isMobile ? "fixed inset-y-0 left-0 z-40" : "relative"}
         ${isMobile && !sidebarOpen ? "-translate-x-full" : "translate-x-0"}
-        ${isMobile ? "w-full" : "w-96"}
+        ${isMobile ? "w-full max-w-sm" : "w-80 xl:w-96"}
         bg-card/95 border-r border-border/50 glass-effect transition-transform duration-200
         ${isMobile ? "pt-16" : ""}
+        flex flex-col
       `}
       >
         {isMobile && sidebarOpen && (
@@ -606,8 +789,8 @@ const supported = isCCTPSupported(11155111); // true`}
           </div>
         </div>
 
-        <ScrollArea className="h-[calc(100vh-140px)]">
-          <div className="p-4 space-y-6">
+        <ScrollArea className="flex-1 overflow-y-auto">
+          <div className="p-4 space-y-6 pb-8">
             {Object.entries(groupedFunctions).map(([category, functions]) => (
               <div key={category}>
                 <h3 className="font-semibold text-sm text-muted-foreground mb-3 uppercase tracking-wide">
@@ -618,15 +801,16 @@ const supported = isCCTPSupported(11155111); // true`}
                     <Button
                       key={index}
                       variant="ghost"
-                      className="w-full justify-start h-auto p-1 hover:bg-primary/5"
+                      className="w-full justify-start h-auto p-3 hover:bg-primary/5 text-left"
                       onClick={() => openWindow(func)}
                     >
-                      <div className="flex items-start space-x-3">
-                        <div className="text-left">
-                          <div className="font-mono text-sm font-medium">
+                      <div className="flex items-start space-x-3 w-full">
+                        <div className="flex-shrink-0 mt-0.5">{func.icon}</div>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-mono text-sm font-medium truncate">
                             {func.name}
                           </div>
-                          <div className="text-xs text-muted-foreground mt-1">
+                          <div className="text-xs text-muted-foreground mt-1 line-clamp-2">
                             {func.description}
                           </div>
                         </div>
@@ -656,27 +840,80 @@ const supported = isCCTPSupported(11155111); // true`}
       `}
       >
         {openWindows.length === 0 && (
-          <div className="absolute inset-0 flex items-center justify-center p-4">
-            <Card className="p-8 text-center glass-effect shadow-soft max-w-md mx-auto">
-              <FileText className="h-12 w-12 text-primary mx-auto mb-4" />
-              <h3 className="text-xl font-semibold mb-2">
-                Documentation Canvas
-              </h3>
-              <p className="text-muted-foreground text-sm md:text-base">
-                {isMobile
-                  ? "Tap the menu button to browse API functions and open documentation windows."
-                  : "Click on any function or class in the sidebar to open its documentation window. You can open multiple windows and organize them as needed."}
-              </p>
-              {isMobile && (
-                <Button
-                  variant="outline"
-                  className="mt-4"
-                  onClick={() => setSidebarOpen(true)}
-                >
-                  <Menu className="mr-2 h-4 w-4" />
-                  Browse API Functions
-                </Button>
-              )}
+          <div className="absolute inset-0 flex items-center justify-center p-4 z-10">
+            <Card className="p-8 text-center glass-effect shadow-soft max-w-2xl mx-auto">
+              <div className="mb-6">
+                <div className="flex items-center justify-center space-x-2 mb-4">
+                  <Zap className="h-8 w-8 text-blue-500" />
+                  <FileText className="h-8 w-8 text-primary" />
+                  <Coins className="h-8 w-8 text-green-500" />
+                </div>
+                <h2 className="text-2xl font-bold mb-2 text-gradient">
+                  GasFlow SDK Documentation
+                </h2>
+                <div className="text-muted-foreground text-sm md:text-base mb-6">
+                  <p className="mb-2">
+                    <strong>
+                      Universal Cross-Chain Gas Payments with USDC
+                    </strong>
+                  </p>
+                  <p>
+                    Powered by Circle CCTP V2, ERC-4337 Paymaster, and Alchemy Bundler
+                    Account Abstraction
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 text-sm">
+                <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg">
+                  <Globe className="h-5 w-5 text-blue-600 mx-auto mb-2" />
+                  <div className="font-medium">5 Testnet Chains</div>
+                  <div className="text-xs text-muted-foreground">
+                    Ethereum, Arbitrum, Base, Avalanche, Polygon
+                  </div>
+                </div>
+                <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg">
+                  <CreditCard className="h-5 w-5 text-green-600 mx-auto mb-2" />
+                  <div className="font-medium">USDC Gas Payments</div>
+                  <div className="text-xs text-muted-foreground">
+                    Pay gas fees with USDC from any chain
+                  </div>
+                </div>
+                <div className="bg-purple-50 dark:bg-purple-900/20 p-3 rounded-lg">
+                  <Route className="h-5 w-5 text-purple-600 mx-auto mb-2" />
+                  <div className="font-medium">Auto Optimization</div>
+                  <div className="text-xs text-muted-foreground">
+                    AI-powered route analysis & cost optimization
+                  </div>
+                </div>
+              </div>
+
+              <div className="border-t pt-4">
+                <p className="text-muted-foreground text-sm mb-4">
+                  {isMobile
+                    ? "Tap the menu button to explore API functions and open interactive documentation windows."
+                    : "Click any function in the sidebar to open its documentation in an interactive window. Drag, resize, and organize multiple windows to build your perfect development workspace."}
+                </p>
+
+                <div className="flex flex-col sm:flex-row gap-2 justify-center">
+                  {isMobile && (
+                    <Button
+                      variant="outline"
+                      onClick={() => setSidebarOpen(true)}
+                    >
+                      <Menu className="mr-2 h-4 w-4" />
+                      Explore API Functions
+                    </Button>
+                  )}
+                  <Button
+                    variant="default"
+                    onClick={() => openWindow(apiFunctions[0])}
+                  >
+                    <Code2 className="mr-2 h-4 w-4" />
+                    Quick Start Guide
+                  </Button>
+                </div>
+              </div>
             </Card>
           </div>
         )}
