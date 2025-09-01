@@ -83,13 +83,13 @@ Circle-Project/
 ### 1. Install the SDK
 
 ```bash
-npm install @gasflow/sdk
+npm install gasflow-sdk
 ```
 
 ### 2. Basic Usage
 
 ```typescript
-import { GasFlowSDK } from '@gasflow/sdk';
+import { GasFlowSDK } from 'gasflow-sdk';
 
 // Initialize SDK
 const sdk = new GasFlowSDK({
@@ -258,9 +258,11 @@ MIT License - see LICENSE file for details.
 
 ## 🔗 Links
 
-- **Documentation**: [Frontend Documentation](./gasflow-sdk-frontend/)
-- **Demo**: [Live Demo Hub](./gasflow-demo-hub/)
-- **SDK**: [NPM Package](./sdk-npm/)
+- **🚀 Live Demo**: [gasflow-sdk.vercel.app](https://gasflow-sdk.vercel.app)
+- **📦 NPM Package**: [npmjs.com/package/gasflow-sdk](https://www.npmjs.com/package/gasflow-sdk)
+- **💻 GitHub Repository**: [github.com/IronicDeGawd/CircleDorahacksGroup1-GasFlowSDK](https://github.com/IronicDeGawd/CircleDorahacksGroup1-GasFlowSDK)
+- **📚 Documentation**: [Frontend Documentation](./gasflow-sdk-frontend/)
+- **🎮 Demo Hub**: [Live Demo Hub](./gasflow-demo-hub/)
 - **Circle Docs**: [developers.circle.com](https://developers.circle.com/)
 - **Discord**: [Circle Developer Community](https://discord.com/channels/473781666251538452/1267777662164799602)
 

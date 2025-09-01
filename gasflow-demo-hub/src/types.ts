@@ -11,7 +11,7 @@ export type {
   TransactionUpdate,
   EventListener,
   CCTPTransferMode
-} from '@gasflow/sdk';
+} from 'gasflow-sdk';
 
 // Extended transaction type for demo UI
 export interface DemoGasFlowTransaction extends Omit<GasFlowTransaction, 'to' | 'value'> {

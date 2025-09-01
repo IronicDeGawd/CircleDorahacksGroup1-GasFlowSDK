@@ -274,7 +274,7 @@ const Landing = () => {
               </div>
 
               <pre className="text-sm font-mono text-foreground bg-muted/50 p-4 rounded-lg overflow-x-auto mb-4">
-{`import { GasFlowSDK } from '@gasflow/sdk';
+{`import { GasFlowSDK } from 'gasflow-sdk';
 
 const result = await gasFlow.execute({
   executeOn: 421614,

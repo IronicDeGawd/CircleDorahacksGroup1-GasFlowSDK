@@ -6,12 +6,10 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
-    "@gasflow/sdk": "file:../sdk-npm/gasflow-sdk-0.7.4.tgz",
     "@hookform/resolvers": "^3.10.0",
     "@radix-ui/react-accordion": "^1.2.11",
     "@radix-ui/react-alert-dialog": "^1.1.14",
@@ -48,6 +46,7 @@
     "date-fns": "^3.6.0",
     "embla-carousel-react": "^8.6.0",
     "ethers": "^6.15.0",
+    "gasflow-sdk": "^0.7.4",
     "input-otp": "^1.4.2",
     "lucide-react": "^0.462.0",
     "next-themes": "^0.3.0",

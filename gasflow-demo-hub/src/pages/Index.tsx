@@ -13,7 +13,7 @@ import { NetworkHelper } from "@/components/NetworkHelper";
 import FallbackWarning from "@/components/FallbackWarning";
 import { Settings, Info, AlertCircle } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { GasFlowSDK } from "@gasflow/sdk";
+import { GasFlowSDK } from "gasflow-sdk";
 import {
   UnifiedBalance,
   DemoGasFlowTransaction,

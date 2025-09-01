@@ -90,15 +90,15 @@ const Documentation = () => {
           <div>
             <h4 className="font-semibold mb-2">1. Installation</h4>
             <pre className="text-xs bg-muted p-3 rounded font-mono overflow-x-auto">
-              {`npm install @gasflow/sdk ethers
+              {`npm install gasflow-sdk ethers
 # or
-yarn add @gasflow/sdk ethers`}
+yarn add gasflow-sdk ethers`}
             </pre>
           </div>
           <div>
             <h4 className="font-semibold mb-2">2. Basic Setup (Development)</h4>
             <pre className="text-xs bg-muted p-3 rounded font-mono overflow-x-auto">
-              {`import { GasFlowSDK } from '@gasflow/sdk';
+              {`import { GasFlowSDK } from 'gasflow-sdk';
 
 // Development mode - no API key required
 const gasFlow = new GasFlowSDK({
@@ -314,7 +314,7 @@ balance.balancesByChain.forEach(chain => {
           <div>
             <h4 className="font-semibold mb-2">Example Usage</h4>
             <pre className="text-xs bg-muted p-3 rounded font-mono overflow-x-auto">
-              {`import { ProductionCCTPService } from '@gasflow/sdk';
+              {`import { ProductionCCTPService } from 'gasflow-sdk';
 
 const cctpService = new ProductionCCTPService(
   process.env.CIRCLE_API_KEY,
@@ -416,7 +416,7 @@ gasFlow.stopRealTimeBalanceUpdates();`}
   getCCTPAddresses,
   getCCTPDomain,
   isCCTPSupported
-} from '@gasflow/sdk';
+} from 'gasflow-sdk';
 
 // Get contract addresses for a chain
 const addresses = getCCTPAddresses(11155111, true); // Ethereum Sepolia testnet
@@ -450,11 +450,11 @@ const supported = isCCTPSupported(11155111); // true`}
           <div>
             <h4 className="font-semibold mb-2">1. Installation</h4>
             <pre className="text-xs bg-muted p-3 rounded font-mono overflow-x-auto">
-              {`npm install @gasflow/sdk ethers
+              {`npm install gasflow-sdk ethers
 # or
-yarn add @gasflow/sdk ethers
+yarn add gasflow-sdk ethers
 # or
-bun add @gasflow/sdk ethers`}
+bun add gasflow-sdk ethers`}
             </pre>
           </div>
           <div>

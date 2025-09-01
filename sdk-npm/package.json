@@ -1,5 +1,5 @@
 {
-  "name": "@gasflow/sdk",
+  "name": "gasflow-sdk",
   "version": "0.7.4",
   "description": "Universal Cross-Chain Gas Payment SDK powered by Circle CCTP V2 and Paymaster",
   "main": "dist/index.js",
@@ -60,10 +60,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gasflow/sdk.git"
+    "url": "git+https://github.com/IronicDeGawd/CircleDorahacksGroup1-GasFlowSDK.git"
   },
   "bugs": {
-    "url": "https://github.com/gasflow/sdk/issues"
+    "url": "https://github.com/IronicDeGawd/CircleDorahacksGroup1-GasFlowSDK/issues"
   },
-  "homepage": "https://github.com/gasflow/sdk#readme"
+  "homepage": "https://gasflow-sdk.vercel.app"
 }
