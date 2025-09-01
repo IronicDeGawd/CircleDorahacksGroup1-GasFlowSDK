@@ -42,8 +42,8 @@ export class AlchemyBundlerClient {
 
   private getEntryPointAddress(chainId: ChainId): string {
     const config = getChainConfig(chainId, this.useTestnet);
-    // Use v0.7 EntryPoint (recommended by Alchemy)
-    return config.entryPointV07 || config.entryPointV06 || '0x0000000071727De22E5E9d8BAf0edAc6f37da032';
+    // Use v0.8 EntryPoint (Circle Paymaster requirement)
+    return config.entryPointV08 || config.entryPointV07 || '0x0000000071727De22E5E9d8BAf0edAc6f37da032';
   }
 
   async sendUserOperation(

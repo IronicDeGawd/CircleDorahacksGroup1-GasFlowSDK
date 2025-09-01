@@ -15,7 +15,6 @@ import { GasEstimator } from '../services/GasEstimator';
 import { CCTPServiceFactory, CCTPService } from '../services/CCTPServiceFactory';
 import { RealPaymasterService } from '../services/RealPaymasterService';
 import { RouteOptimizer, RouteAnalysis } from '../services/RouteOptimizer';
-import { TraditionalExecutionService } from '../services/TraditionalExecutionService';
 import { DEFAULT_SUPPORTED_CHAINS } from '../config/chains';
 
 export class GasFlowSDK {
@@ -23,7 +22,6 @@ export class GasFlowSDK {
   private gasEstimator: GasEstimator;
   private cctpService: CCTPService;
   private paymasterService: RealPaymasterService;
-  private traditionalExecutionService: TraditionalExecutionService;
   private routeOptimizer: RouteOptimizer;
   private eventListeners: Map<string, EventListener[]> = new Map();
   
@@ -45,7 +43,6 @@ export class GasFlowSDK {
       signers: this.config.signers
     });
     this.paymasterService = new RealPaymasterService(useTestnet, this.config.alchemyApiKey);
-    this.traditionalExecutionService = new TraditionalExecutionService(useTestnet);
     this.routeOptimizer = new RouteOptimizer(
       this.balanceManager,
       this.gasEstimator,
@@ -76,18 +73,38 @@ export class GasFlowSDK {
         estimatedCompletion: new Date(Date.now() + 30000), // 30 seconds estimate
       });
 
-      // Step 1: Analyze optimal route
-      const routeAnalysis = await this.routeOptimizer.analyzeOptimalRoute(
-        transaction,
-        userAddress,
-        transaction.urgency || 'medium'
-      );
+      // Step 1: Use provided route or analyze optimal route
+      let bestRoute: any;
+      
+      if (transaction.executeOn && typeof transaction.executeOn === 'number' && 
+          transaction.payFromChain && transaction.payFromChain !== 'auto') {
+        // User has selected a specific route - use it directly
+        console.log('Using user-selected route:', {
+          executeOn: transaction.executeOn,
+          payFrom: transaction.payFromChain
+        });
+        
+        bestRoute = {
+          executeOnChain: transaction.executeOn,
+          payFromChain: transaction.payFromChain,
+          gasCost: BigNumber.from('10000'), // Will be calculated later
+          totalCost: BigNumber.from('10000'),
+          estimatedTime: transaction.payFromChain === transaction.executeOn ? 120 : 180
+        };
+      } else {
+        // Analyze optimal route
+        const routeAnalysis = await this.routeOptimizer.analyzeOptimalRoute(
+          transaction,
+          userAddress,
+          transaction.urgency || 'medium'
+        );
 
-      if (!routeAnalysis.bestRoute) {
-        throw new Error('No viable execution route found');
+        if (!routeAnalysis.bestRoute) {
+          throw new Error('No viable execution route found');
+        }
+
+        bestRoute = routeAnalysis.bestRoute;
       }
-
-      const { bestRoute } = routeAnalysis;
       
       console.log('Optimal route selected:', {
         executeOn: bestRoute.executeOnChain,
@@ -112,7 +129,8 @@ export class GasFlowSDK {
           fromChain: bestRoute.payFromChain,
           toChain: bestRoute.executeOnChain,
           recipient: userAddress,
-          useFastTransfer: false, // Use Standard Transfer by default
+          transferMode: transaction.transferMode || 'auto', // Use specified mode or auto
+          useFastTransfer: false, // Backward compatibility - overridden by transferMode
         });
 
         bridgeTransactionHash = bridgeResult.transactionHash;
@@ -149,58 +167,66 @@ export class GasFlowSDK {
       });
 
       if (paymasterAvailable && hasPrivateKey) {
-        // Use Paymaster for USDC gas payment with private key
-        console.log('🏦 Executing with Paymaster (private key mode)');
+        // Use Circle Paymaster for USDC gas payment with private key
+        console.log('🏦 Executing with Circle Paymaster v0.8 (private key mode)');
         
-        const userOpResult = await this.paymasterService.buildUserOperation(
+        const operationHash = await this.paymasterService.executeWithPaymaster(
           transaction,
-          bestRoute.executeOnChain,
-          userAddress as `0x${string}`,
-          userPrivateKey
-        );
-
-        const operationHash = await this.paymasterService.submitUserOperation(
-          userOpResult.userOperation,
+          userPrivateKey,
           bestRoute.executeOnChain
         );
 
-        const receipt = await this.paymasterService.getOperationReceipt(
-          operationHash,
-          bestRoute.executeOnChain
-        );
+        // Wait for receipt with improved polling
+        let receipt;
+        let attempts = 0;
+        const maxAttempts = 30; // 30 seconds max wait
+        
+        while (attempts < maxAttempts) {
+          try {
+            receipt = await this.paymasterService.getTransactionReceipt(
+              operationHash,
+              bestRoute.executeOnChain
+            );
+            
+            if (receipt.success && receipt.transactionHash) {
+              break;
+            }
+          } catch (error) {
+            console.log(`[CIRCLE] Receipt attempt ${attempts + 1}/${maxAttempts}: ${error}`);
+          }
+          
+          attempts++;
+          await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
+        }
 
-        if (!receipt.success || !receipt.transactionHash) {
-          throw new Error('Paymaster transaction failed');
+        if (!receipt?.success || !receipt.transactionHash) {
+          throw new Error('Circle Paymaster transaction failed or receipt unavailable');
         }
 
         transactionHash = receipt.transactionHash;
         gasUsed = BigNumber.from(receipt.gasUsed?.toString() || '0');
       } else if (hasSigner) {
-        // Use Traditional execution with signer (MetaMask compatible)
         console.log('🔗 Executing with Traditional gas payment (signer mode)');
         
-        // Get signer for the execution chain
-        let executionSigner = signer;
-        
-        // If signer is for different chain, try to get correct signer from CCTP service
-        if (this.cctpService && 'getSigner' in this.cctpService) {
-          try {
-            executionSigner = (this.cctpService as any).getSigner(bestRoute.executeOnChain);
-            console.log(`✅ Using chain-specific signer for chain ${bestRoute.executeOnChain}`);
-          } catch (error) {
-            console.log(`⚠️ Using provided signer for chain ${bestRoute.executeOnChain}:`, error);
-            executionSigner = signer;
-          }
+        try {
+          const txRequest = {
+            to: transaction.to,
+            value: transaction.value || 0,
+            data: transaction.data || '0x'
+          };
+          
+          const txResponse = await signer.sendTransaction(txRequest);
+          console.log(`Transaction submitted: ${txResponse.hash}`);
+          
+          const receipt = await txResponse.wait();
+          console.log(`Transaction confirmed in block ${receipt.blockNumber}`);
+          
+          transactionHash = txResponse.hash;
+          gasUsed = receipt.gasUsed;
+        } catch (error) {
+          console.error('Traditional execution failed:', error);
+          throw new Error(`Transaction execution failed: ${error}`);
         }
-        
-        const executionResult = await this.traditionalExecutionService.executeTransaction(
-          transaction,
-          executionSigner,
-          bestRoute.executeOnChain
-        );
-
-        transactionHash = executionResult.transactionHash;
-        gasUsed = executionResult.gasUsed;
       } else {
         // No valid execution method available
         const errorMessage = paymasterAvailable 
@@ -212,7 +238,7 @@ export class GasFlowSDK {
 
       // Step 4: Calculate final costs and savings
       const totalCostUSDC = bestRoute.totalCost;
-      const estimatedSavings = this.calculateSavings(routeAnalysis, bestRoute);
+      const estimatedSavings = undefined; // Skip savings calculation for user-selected routes
 
       this.emitUpdate({
         status: TransactionStatus.COMPLETED,

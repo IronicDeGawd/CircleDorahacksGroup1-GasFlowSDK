@@ -20,12 +20,70 @@ export class SignerV5Adapter {
   }
 
   async sendTransaction(transaction: any): Promise<any> {
-    const tx = await this.v6Signer.sendTransaction(transaction);
+    // Convert v5 BigNumber objects to v6-compatible formats
+    const v6Transaction = this.convertTransactionToV6Format(transaction);
+    const tx = await this.v6Signer.sendTransaction(v6Transaction);
     return {
       hash: tx.hash,
       wait: () => tx.wait(),
       ...tx
     };
+  }
+
+  // Handle contract calls - critical for SDK compatibility
+  async call(transaction: any): Promise<any> {
+    const v6Transaction = this.convertTransactionToV6Format(transaction);
+    return await this.v6Signer.call(v6Transaction);
+  }
+
+  async estimateGas(transaction: any): Promise<any> {
+    const v6Transaction = this.convertTransactionToV6Format(transaction);
+    const result = await this.v6Signer.estimateGas(v6Transaction);
+    // Convert v6 BigInt back to v5 BigNumber for SDK compatibility
+    return {
+      toString: () => result.toString(),
+      mul: (factor: any) => ({ 
+        div: (divisor: any) => ({
+          toString: () => (BigInt(result.toString()) * BigInt(factor.toString()) / BigInt(divisor.toString())).toString()
+        })
+      }),
+      _isBigNumber: true
+    };
+  }
+
+  private convertTransactionToV6Format(transaction: any): any {
+    const converted: any = { ...transaction };
+    
+    // Convert v5 BigNumber objects to v6 BigInt or number strings
+    if (transaction.gasLimit && this.isBigNumber(transaction.gasLimit)) {
+      converted.gasLimit = BigInt(transaction.gasLimit.toString());
+    }
+    
+    if (transaction.gasPrice && this.isBigNumber(transaction.gasPrice)) {
+      converted.gasPrice = BigInt(transaction.gasPrice.toString());
+    }
+    
+    if (transaction.value && this.isBigNumber(transaction.value)) {
+      converted.value = BigInt(transaction.value.toString());
+    }
+    
+    if (transaction.maxFeePerGas && this.isBigNumber(transaction.maxFeePerGas)) {
+      converted.maxFeePerGas = BigInt(transaction.maxFeePerGas.toString());
+    }
+    
+    if (transaction.maxPriorityFeePerGas && this.isBigNumber(transaction.maxPriorityFeePerGas)) {
+      converted.maxPriorityFeePerGas = BigInt(transaction.maxPriorityFeePerGas.toString());
+    }
+
+    return converted;
+  }
+
+  private isBigNumber(value: any): boolean {
+    // Check if it's an ethers v5 BigNumber
+    return value && 
+           typeof value === 'object' && 
+           value._isBigNumber === true &&
+           typeof value.toString === 'function';
   }
 
   // Make the adapter compatible with ethers v5 contract connection
@@ -71,6 +129,13 @@ export class SignerV5Adapter {
             }
             if (prop === 'provider') {
               return v6Signer.provider;
+            }
+            
+            // CRITICAL FIX: Handle contract method calls properly
+            // When SDK calls contract.estimateGas.receiveMessage(), we need to proxy this correctly
+            if (prop === 'estimateGas' || prop === 'call' || prop === 'sendTransaction') {
+              const value = Reflect.get(target, prop, receiver);
+              return typeof value === 'function' ? value.bind(target) : value;
             }
             
             // For all other properties, try the adapter first, then the original v6 signer

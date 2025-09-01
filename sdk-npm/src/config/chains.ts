@@ -8,12 +8,13 @@ export const SUPPORTED_CHAINS: Record<ChainId, ChainConfig> = {
     rpcUrl: 'https://ethereum-sepolia-rpc.publicnode.com',
     testnetRpcUrl: 'https://ethereum-sepolia-rpc.publicnode.com',
     usdcAddress: '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238',
-    paymasterAddress: '0x3BA9A96eE3eFf3A69E2B18886AcF52027EFF8966',
+    paymasterAddress: '0x3BA9A96eE3eFf3A69E2B18886AcF52027EFF8966', // Circle Paymaster v0.8
     cctpDomain: 0,
     gasTokenSymbol: 'ETH',
     blockExplorerUrl: 'https://sepolia.etherscan.io',
     entryPointV06: '0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789',
     entryPointV07: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
+    entryPointV08: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
     bundlerUrl: 'https://eth-sepolia.g.alchemy.com/v2',
   },
   
@@ -24,12 +25,13 @@ export const SUPPORTED_CHAINS: Record<ChainId, ChainConfig> = {
     rpcUrl: 'https://sepolia-rollup.arbitrum.io/rpc',
     testnetRpcUrl: 'https://sepolia-rollup.arbitrum.io/rpc',
     usdcAddress: '0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d',
-    paymasterAddress: '0x31BE08D380A21fc740883c0BC434FcFc88740b58',
+    paymasterAddress: '0x3BA9A96eE3eFf3A69E2B18886AcF52027EFF8966', // Circle Paymaster v0.8
     cctpDomain: 3,
     gasTokenSymbol: 'ETH',
     blockExplorerUrl: 'https://sepolia.arbiscan.io',
     entryPointV06: '0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789',
     entryPointV07: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
+    entryPointV08: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
     bundlerUrl: 'https://arb-sepolia.g.alchemy.com/v2',
   },
   
@@ -40,12 +42,13 @@ export const SUPPORTED_CHAINS: Record<ChainId, ChainConfig> = {
     rpcUrl: 'https://sepolia.base.org',
     testnetRpcUrl: 'https://sepolia.base.org',
     usdcAddress: '0x036CbD53842c5426634e7929541eC2318f3dCF7e',
-    paymasterAddress: '0x31BE08D380A21fc740883c0BC434FcFc88740b58',
+    paymasterAddress: '0x3BA9A96eE3eFf3A69E2B18886AcF52027EFF8966', // Circle Paymaster v0.8
     cctpDomain: 6,
     gasTokenSymbol: 'ETH',
     blockExplorerUrl: 'https://sepolia.basescan.org',
     entryPointV06: '0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789',
     entryPointV07: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
+    entryPointV08: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
     bundlerUrl: 'https://base-sepolia.g.alchemy.com/v2',
   },
   
@@ -56,12 +59,13 @@ export const SUPPORTED_CHAINS: Record<ChainId, ChainConfig> = {
     rpcUrl: 'https://api.avax-test.network/ext/bc/C/rpc',
     testnetRpcUrl: 'https://api.avax-test.network/ext/bc/C/rpc',
     usdcAddress: '0x5425890298aed601595a70AB815c96711a31Bc65',
-    paymasterAddress: '0x3BA9A96eE3eFf3A69E2B18886AcF52027EFF8966',
+    paymasterAddress: '0x3BA9A96eE3eFf3A69E2B18886AcF52027EFF8966', // Circle Paymaster v0.8
     cctpDomain: 1,
     gasTokenSymbol: 'AVAX',
     blockExplorerUrl: 'https://testnet.snowtrace.io',
     entryPointV06: '0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789',
     entryPointV07: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
+    entryPointV08: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
     bundlerUrl: 'https://avax-fuji.g.alchemy.com/v2',
   },
   
@@ -72,12 +76,13 @@ export const SUPPORTED_CHAINS: Record<ChainId, ChainConfig> = {
     rpcUrl: 'https://rpc-amoy.polygon.technology',
     testnetRpcUrl: 'https://rpc-amoy.polygon.technology',
     usdcAddress: '0x41e94eb019c0762f9bfcf9fb1e58725bfb0e7582',
-    paymasterAddress: '0x3BA9A96eE3eFf3A69E2B18886AcF52027EFF8966',
+    paymasterAddress: '0x3BA9A96eE3eFf3A69E2B18886AcF52027EFF8966', // Circle Paymaster v0.8
     cctpDomain: 7,
     gasTokenSymbol: 'MATIC',
     blockExplorerUrl: 'https://amoy.polygonscan.com',
     entryPointV06: '0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789',
     entryPointV07: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
+    entryPointV08: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
     bundlerUrl: 'https://polygon-amoy.g.alchemy.com/v2',
   },
 };
@@ -103,6 +108,7 @@ export const MAINNET_CHAINS: Record<ChainId, ChainConfig> = {
     blockExplorerUrl: 'https://etherscan.io',
     entryPointV06: '0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789',
     entryPointV07: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
+    entryPointV08: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
     bundlerUrl: 'https://eth-mainnet.g.alchemy.com/v2',
   },
   
@@ -119,6 +125,7 @@ export const MAINNET_CHAINS: Record<ChainId, ChainConfig> = {
     blockExplorerUrl: 'https://arbiscan.io',
     entryPointV06: '0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789',
     entryPointV07: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
+    entryPointV08: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
     bundlerUrl: 'https://arb-mainnet.g.alchemy.com/v2',
   },
   
@@ -134,6 +141,7 @@ export const MAINNET_CHAINS: Record<ChainId, ChainConfig> = {
     blockExplorerUrl: 'https://basescan.org',
     entryPointV06: '0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789',
     entryPointV07: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
+    entryPointV08: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
     bundlerUrl: 'https://base-mainnet.g.alchemy.com/v2',
   },
   
@@ -149,6 +157,7 @@ export const MAINNET_CHAINS: Record<ChainId, ChainConfig> = {
     blockExplorerUrl: 'https://snowtrace.io',
     entryPointV06: '0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789',
     entryPointV07: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
+    entryPointV08: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
     bundlerUrl: 'https://avax-mainnet.g.alchemy.com/v2',
   },
   

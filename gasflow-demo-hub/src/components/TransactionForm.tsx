@@ -11,17 +11,42 @@ import {
 } from "@/components/ui/select";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { AlertCircle, Zap, Send, Search } from "lucide-react";
-import { GasFlowTransaction, ChainId, CHAIN_NAMES } from "../types";
+import { AlertCircle, Zap, Send, Search, Clock, Gauge } from "lucide-react";
+import { DemoGasFlowTransaction, ChainId, CHAIN_NAMES, UnifiedBalance } from "../types";
+import { z } from "zod";
+
+// Zod validation schema
+const createTransactionSchema = (balance?: UnifiedBalance) => z.object({
+  to: z.string()
+    .min(1, "Recipient address is required")
+    .regex(/^0x[a-fA-F0-9]{40}$/, "Invalid Ethereum address format"),
+  gasPaymentETH: z.string()
+    .min(1, "Gas payment amount is required")
+    .refine((val) => !isNaN(parseFloat(val)) && parseFloat(val) > 0, "Must be a positive number"),
+  gasPaymentUSDC: z.bigint().optional(),
+}).refine((data) => {
+  if (!data.gasPaymentUSDC || !balance) return true;
+  
+  const requiredUSDC = data.gasPaymentUSDC;
+  const availableUSDC = balance.totalUSDC;
+  
+  return requiredUSDC <= availableUSDC;
+}, {
+  message: "Insufficient USDC balance for this gas payment amount",
+  path: ["gasPaymentETH"],
+});
 
 interface TransactionFormProps {
-  transaction: GasFlowTransaction;
-  onChange: (transaction: GasFlowTransaction) => void;
+  transaction: DemoGasFlowTransaction;
+  onChange: (transaction: DemoGasFlowTransaction) => void;
   onAnalyze: () => void;
   onExecute: () => void;
   isExecuting: boolean;
   isAnalyzing?: boolean;
   hasRouteAnalysis: boolean;
+  walletAddress?: string | null;
+  balance?: UnifiedBalance | null;
+  ethPrice?: number;
 }
 
 const CHAINS = [
@@ -50,6 +75,30 @@ const URGENCY_LEVELS = [
   },
 ];
 
+const TRANSFER_MODES = [
+  {
+    value: "auto",
+    label: "Auto Select",
+    description: "Automatically choose best mode",
+    icon: Zap,
+    timing: "Optimized",
+  },
+  {
+    value: "fast",
+    label: "Fast Transfer",
+    description: "8-30 seconds, higher fees",
+    icon: Gauge,
+    timing: "8-30s",
+  },
+  {
+    value: "standard",
+    label: "Standard Transfer", 
+    description: "2-19 minutes, lower fees",
+    icon: Clock,
+    timing: "2-19m",
+  },
+];
+
 export function TransactionForm({
   transaction,
   onChange,
@@ -58,9 +107,20 @@ export function TransactionForm({
   isExecuting,
   isAnalyzing = false,
   hasRouteAnalysis,
+  walletAddress,
+  balance,
+  ethPrice = 2400, // Fallback ETH price
 }: TransactionFormProps) {
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [ethValue, setEthValue] = useState<string>(""); // Local state for ETH input
+  const [sendAmountValue, setSendAmountValue] = useState<string>(""); // Local state for send amount
+  const [gasBudgetValue, setGasBudgetValue] = useState<string>(""); // Local state for gas budget
+
+  // Auto-fill recipient with connected wallet address
+  React.useEffect(() => {
+    if (walletAddress && !transaction.to) {
+      onChange({ ...transaction, to: walletAddress });
+    }
+  }, [walletAddress]);
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
@@ -71,8 +131,27 @@ export function TransactionForm({
       newErrors.to = "Invalid Ethereum address format";
     }
 
-    if (!transaction.value || Number(transaction.value) <= 0) {
-      newErrors.value = "Value must be greater than 0";
+    // Validate send amount
+    if (!transaction.sendAmountETH || Number(transaction.sendAmountETH) <= 0) {
+      newErrors.sendAmountETH = "Send amount must be greater than 0";
+    }
+
+    // Validate gas budget
+    const gasAmount = gasBudgetValue || transaction.gasPaymentETH;
+    if (!gasAmount || Number(gasAmount) <= 0) {
+      newErrors.gasPaymentETH = "Gas budget must be greater than 0";
+    }
+
+    // Validate USDC balance if available
+    if (balance && transaction.gasPaymentUSDC) {
+      const requiredUSDC = transaction.gasPaymentUSDC;
+      const availableUSDC = balance.totalUSDC;
+      
+      if (requiredUSDC > availableUSDC) {
+        const requiredFormatted = (Number(requiredUSDC) / 1e6).toFixed(6);
+        const availableFormatted = (Number(availableUSDC) / 1e6).toFixed(6);
+        newErrors.gasPaymentETH = `Insufficient USDC. Need ${requiredFormatted} USDC, have ${availableFormatted} USDC`;
+      }
     }
 
     setErrors(newErrors);
@@ -91,7 +170,7 @@ export function TransactionForm({
     }
   };
 
-  const updateTransaction = (field: keyof GasFlowTransaction, value: any) => {
+  const updateTransaction = (field: keyof DemoGasFlowTransaction, value: any) => {
     onChange({ ...transaction, [field]: value });
     // Clear error for this field
     if (errors[field]) {
@@ -99,11 +178,12 @@ export function TransactionForm({
     }
   };
 
-  const handleEthValueChange = (value: string) => {
-    setEthValue(value);
-
-    // Update transaction with BigInt value
+  const handleSendAmountChange = (value: string) => {
+    setSendAmountValue(value);
+    updateTransaction("sendAmountETH", value);
+    
     if (value && !isNaN(parseFloat(value))) {
+      // Convert send amount to wei for the actual transaction
       const weiValue = BigInt(Math.floor(parseFloat(value) * 1e18));
       updateTransaction("value", weiValue);
     } else {
@@ -111,12 +191,31 @@ export function TransactionForm({
     }
   };
 
-  // Initialize ETH value from transaction.value on mount
-  React.useEffect(() => {
-    if (transaction.value) {
-      setEthValue((Number(transaction.value) / 1e18).toString());
+  const handleGasBudgetChange = (value: string) => {
+    setGasBudgetValue(value);
+    updateTransaction("gasPaymentETH", value);
+    
+    if (value && !isNaN(parseFloat(value))) {
+      // Convert ETH gas budget to USDC using current ETH price
+      const ethAmount = parseFloat(value);
+      const usdValue = ethAmount * ethPrice; // ETH amount * ETH price = USD value
+      const usdcAmount = BigInt(Math.floor(usdValue * 1e6)); // Convert to USDC (6 decimals)
+      
+      updateTransaction("gasPaymentUSDC", usdcAmount);
+    } else {
+      updateTransaction("gasPaymentUSDC", undefined);
     }
-  }, [transaction.value]);
+  };
+
+  // Initialize values from transaction on mount
+  React.useEffect(() => {
+    if (transaction.sendAmountETH) {
+      setSendAmountValue(transaction.sendAmountETH);
+    }
+    if (transaction.gasPaymentETH) {
+      setGasBudgetValue(transaction.gasPaymentETH);
+    }
+  }, [transaction.sendAmountETH, transaction.gasPaymentETH]);
 
   return (
     <Card className="p-6">
@@ -141,23 +240,55 @@ export function TransactionForm({
           )}
         </div>
 
-        {/* Value */}
+        {/* Send Amount */}
         <div className="space-y-2">
-          <Label htmlFor="value">Value (ETH)</Label>
+          <Label htmlFor="sendAmount">Amount to Send (ETH)</Label>
           <Input
-            id="value"
+            id="sendAmount"
             type="number"
             step="0.001"
             min="0"
-            placeholder="0.1"
-            value={ethValue}
-            onChange={(e) => handleEthValueChange(e.target.value)}
-            className={errors.value ? "border-destructive" : ""}
+            placeholder="0.001"
+            value={sendAmountValue}
+            onChange={(e) => handleSendAmountChange(e.target.value)}
+            className={errors.sendAmountETH ? "border-destructive" : ""}
           />
-          {errors.value && (
+          <div className="text-xs text-muted-foreground">
+            This ETH amount will be sent to the recipient address
+          </div>
+          {errors.sendAmountETH && (
             <div className="flex items-center gap-1 text-destructive text-sm">
               <AlertCircle className="h-3 w-3" />
-              {errors.value}
+              {errors.sendAmountETH}
+            </div>
+          )}
+        </div>
+
+        {/* Max Gas Budget */}
+        <div className="space-y-2">
+          <Label htmlFor="gasBudget">Max Gas Budget (ETH equivalent)</Label>
+          <Input
+            id="gasBudget"
+            type="number"
+            step="0.001"
+            min="0"
+            placeholder="0.01"
+            value={gasBudgetValue}
+            onChange={(e) => handleGasBudgetChange(e.target.value)}
+            className={errors.gasPaymentETH ? "border-destructive" : ""}
+          />
+          {transaction.gasPaymentUSDC && (
+            <div className="text-xs text-muted-foreground">
+              ≈ {(Number(transaction.gasPaymentUSDC) / 1e6).toFixed(4)} USDC budget (@ ${ethPrice}/ETH)
+            </div>
+          )}
+          <div className="text-xs text-muted-foreground">
+            Maximum USDC you're willing to spend on gas fees for this transaction
+          </div>
+          {errors.gasPaymentETH && (
+            <div className="flex items-center gap-1 text-destructive text-sm">
+              <AlertCircle className="h-3 w-3" />
+              {errors.gasPaymentETH}
             </div>
           )}
         </div>
@@ -165,6 +296,17 @@ export function TransactionForm({
         {/* Execute On Chain */}
         <div className="space-y-2">
           <Label>Execute On</Label>
+          <div className="text-xs text-amber-600 mb-2">
+            ⚠️ You need {
+              typeof transaction.executeOn === "number" 
+                ? (transaction.executeOn === 11155111 ? "ETH" :
+                   transaction.executeOn === 421614 ? "ETH" :
+                   transaction.executeOn === 84532 ? "ETH" :
+                   transaction.executeOn === 43113 ? "AVAX" :
+                   transaction.executeOn === 80002 ? "MATIC" : "native tokens")
+                : "native tokens"
+            } on the destination chain for CCTP minting gas fees
+          </div>
           <Select
             value={
               typeof transaction.executeOn === "number"
@@ -206,7 +348,7 @@ export function TransactionForm({
 
         {/* Pay From Chain */}
         <div className="space-y-2">
-          <Label>Pay From</Label>
+          <Label>Send USDC From</Label>
           <Select
             value={
               typeof transaction.payFromChain === "number"
@@ -273,13 +415,54 @@ export function TransactionForm({
           </Select>
         </div>
 
+        {/* Transfer Mode */}
+        <div className="space-y-2">
+          <Label>Cross-Chain Transfer Mode</Label>
+          <Select
+            value={transaction.transferMode || "auto"}
+            onValueChange={(value) =>
+              updateTransaction("transferMode", value as "auto" | "fast" | "standard")
+            }
+          >
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {TRANSFER_MODES.map((mode) => {
+                const IconComponent = mode.icon;
+                return (
+                  <SelectItem key={mode.value} value={mode.value}>
+                    <div className="flex items-center gap-3">
+                      <IconComponent className="h-4 w-4" />
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium">{mode.label}</span>
+                          <Badge variant="outline" className="text-xs">
+                            {mode.timing}
+                          </Badge>
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {mode.description}
+                        </div>
+                      </div>
+                    </div>
+                  </SelectItem>
+                );
+              })}
+            </SelectContent>
+          </Select>
+          <div className="text-xs text-muted-foreground">
+            Controls speed and fees for cross-chain USDC transfers via Circle CCTP
+          </div>
+        </div>
+
         {/* Smart Execution Info */}
         <div className="p-4 bg-info-bg border border-info/20 rounded-lg">
           <div className="flex items-start gap-2">
             <Zap className="h-4 w-4 text-info mt-0.5" />
             <div className="text-sm">
               <div className="font-medium text-info">Smart Execution</div>
-              <div className="text-info-foreground/80 text-gray-700 mt-1">
+              <div className="text-info-foreground/80 !text-gray-700 mt-1">
                 GasFlow will automatically find the most cost-effective route
                 for your transaction, potentially using cross-chain bridges to
                 optimize gas costs.

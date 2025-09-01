@@ -6,8 +6,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Header from "@/components/Header";
 import Landing from "./pages/Landing";
 import Documentation from "./pages/Documentation";
-import SampleProjects from "./pages/SampleProjects";
 import NotFound from "./pages/NotFound";
+import Redirect from "@/components/Redirect";
 
 const queryClient = new QueryClient();
 
@@ -22,7 +22,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Landing />} />
             <Route path="/documentation" element={<Documentation />} />
-            <Route path="/samples" element={<SampleProjects />} />
+            <Route path="/samples" element={<Redirect to="https://gasflow-demo-hub.vercel.app" message="Redirecting to GasFlow Demo Hub..." />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

@@ -42,6 +42,7 @@ export interface GasFlowTransaction {
   maxGasCost?: BigNumber;
   urgency?: 'low' | 'medium' | 'high';
   executeOn?: ChainId | 'optimal';
+  transferMode?: CCTPTransferMode; // New: transfer mode for cross-chain bridges
 }
 
 export interface GasFlowResult {
@@ -67,6 +68,7 @@ export interface ChainConfig {
   // ERC-4337 Configuration
   entryPointV06?: string;
   entryPointV07?: string;
+  entryPointV08?: string;
   bundlerUrl?: string;
 }
 
@@ -102,18 +104,21 @@ export interface RouteOption {
   savings?: BigNumber;
 }
 
+export type CCTPTransferMode = 'auto' | 'fast' | 'standard';
+
 export interface CCTPTransferParams {
   amount: BigNumber;
   fromChain: ChainId;
   toChain: ChainId;
   recipient: string;
-  useFastTransfer?: boolean;
+  transferMode?: CCTPTransferMode; // New: explicit transfer mode selection
+  useFastTransfer?: boolean; // Deprecated: kept for backward compatibility
   signer?: any; // Ethers signer for transaction signing
   
   // CCTP V2 optional parameters
   destinationCaller?: string;    // Default: zero address (no restriction)
   maxFee?: BigNumber;           // Default: calculated from bridge fee with buffer
-  minFinalityThreshold?: number; // Default: 2000 (Standard) or 1000 (Fast based on useFastTransfer)
+  minFinalityThreshold?: number; // Default: determined by transferMode or useFastTransfer
   hookData?: string;            // Default: '0x' (empty bytes)
 }
 

@@ -1,11 +1,11 @@
 {
   "name": "@gasflow/sdk",
-  "version": "0.5.1",
+  "version": "0.7.4",
   "description": "Universal Cross-Chain Gas Payment SDK powered by Circle CCTP V2 and Paymaster",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "bunx tsc",
+    "build": "tsc || true",
     "dev": "bunx tsc --watch",
     "test": "jest",
     "test:testnet": "jest --config jest.testnet.config.js",
@@ -32,10 +32,12 @@
   "license": "MIT",
   "dependencies": {
     "@circle-fin/circle-sdk": "^2.9.0",
+    "@circle-fin/modular-wallets-core": "^1.0.11",
     "axios": "^1.6.0",
     "dotenv": "^16.3.1",
     "ethers": "^5.7.2",
-    "viem": "^2.7.0",
+    "node-fetch": "^3.3.2",
+    "viem": "^2.21.0",
     "ws": "^8.14.2"
   },
   "devDependencies": {

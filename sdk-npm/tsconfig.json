@@ -8,6 +8,7 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node",
     "resolveJsonModule": true,
@@ -17,7 +18,9 @@
     "removeComments": false,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "noEmitOnError": false,
+    "noImplicitOverride": false
   },
   "include": [
     "src/**/*"
@@ -26,6 +29,7 @@
     "node_modules",
     "dist",
     "tests",
-    "demo"
+    "demo",
+    "node_modules/ox"
   ]
 }

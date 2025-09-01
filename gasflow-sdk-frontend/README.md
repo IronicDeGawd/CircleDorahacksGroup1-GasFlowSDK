@@ -27,75 +27,193 @@ This project is built with:
 
 ### Prerequisites
 
-- Node.js & npm installed ([install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating))
+### Installation & Setup
 
-### Getting Started
+```bash
+# Clone the repository
+git clone <repository-url>
+cd Circle-Project/gasflow-sdk-frontend
 
-```sh
-# Step 1: Navigate to the project directory
-cd gasflow-sdk-frontend
-
-# Step 2: Install dependencies
+# Install dependencies
 npm install
 
-# Step 3: Start development server
+# Set up environment variables
+cp .env.example .env
+# Edit .env with your configuration
+
+# Start development server
 npm run dev
-
-# Step 4: Open your browser
-# Visit http://localhost:8080
 ```
 
-### Available Scripts
+Visit [http://localhost:5173](http://localhost:5173) to view the documentation.
 
-- `npm run dev` - Start development server with hot reload
-- `npm run build` - Build for production
-- `npm run build:dev` - Build in development mode
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint
-
-## Project Structure
+## 📁 Project Structure
 
 ```
-src/
-├── components/          # Reusable UI components
-│   ├── ui/             # shadcn/ui components
-│   ├── Header.tsx      # Navigation header
-│   └── DraggableWindow.tsx # Documentation windows
-├── pages/              # Main application pages
-│   ├── Landing.tsx     # Home page
-│   ├── Documentation.tsx # API documentation
-│   └── SampleProjects.tsx # Project showcase
-├── hooks/              # Custom React hooks
-└── lib/                # Utility functions
+gasflow-sdk-frontend/
+├── src/
+│   ├── components/          # Reusable UI components
+│   │   ├── ui/             # Shadcn/ui components
+│   │   ├── CodeBlock.tsx   # Syntax-highlighted code
+│   │   └── Navigation.tsx  # Site navigation
+│   ├── pages/              # Documentation pages
+│   │   ├── Documentation.tsx  # Main SDK docs
+│   │   ├── Examples.tsx       # Integration examples
+│   │   └── GettingStarted.tsx # Setup guide
+│   ├── hooks/              # Custom React hooks
+│   ├── lib/                # Utility functions
+│   └── App.tsx             # Main application
+├── public/                 # Static assets
+├── package.json
+└── README.md              # This file
 ```
 
-## Customization
+## 🛠️ Available Scripts
 
-The application uses a warm color theme with CSS custom properties defined in `src/index.css`. You can customize:
+```bash
+# Development
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run preview      # Preview production build
 
-- **Colors**: Modify HSL values in the `:root` selector
-- **Components**: Update React components in `src/components/`
-- **Content**: Edit page content in `src/pages/`
-- **Styling**: Adjust Tailwind classes and custom CSS
+# Code Quality
+npm run lint         # Run ESLint
+npm run type-check   # TypeScript type checking
 
-## Deployment
+# Deployment
+npm run deploy       # Deploy to hosting service
+```
 
-Build the project for production:
+## 🔧 Configuration
 
-```sh
+### Environment Variables
+
+Create a `.env` file:
+
+```bash
+# Circle API Configuration
+VITE_CIRCLE_API_KEY=your_circle_api_key
+
+# Optional: Custom branding
+VITE_APP_NAME="Your App Name"
+VITE_APP_DESCRIPTION="Your app description"
+
+# Analytics (optional)
+VITE_ANALYTICS_ID=your_analytics_id
+```
+
+### Customization Options
+
+#### 🎨 **Styling & Theming**
+- Modify `tailwind.config.js` for custom colors and themes
+- Update component styles in `src/components/`
+- Customize layouts in `src/pages/`
+
+#### 📝 **Content Management**
+- Edit documentation content in `src/pages/Documentation.tsx`
+- Add new examples in `src/pages/Examples.tsx`
+- Update getting started guide in `src/pages/GettingStarted.tsx`
+
+#### 🔗 **Navigation & Routing**
+- Configure routes in `src/App.tsx`
+- Update navigation in `src/components/Navigation.tsx`
+
+## 🏗️ Technologies Stack
+
+| Technology | Purpose | Version |
+|------------|---------|---------|
+| **React** | UI Framework | 18.x |
+| **TypeScript** | Type Safety | 5.x |
+| **Vite** | Build Tool | 5.x |
+| **Tailwind CSS** | Styling | 3.x |
+| **Shadcn/ui** | UI Components | Latest |
+| **React Router** | Navigation | 6.x |
+| **Prism.js** | Code Highlighting | Latest |
+
+## 📖 Documentation Sections
+
+### 1. **Getting Started**
+- SDK installation guide
+- Environment setup
+- Basic configuration
+- First integration example
+
+### 2. **Core Features**
+- CCTP V2 integration
+- Multi-chain balance checking
+- Cross-chain transfers
+- Route optimization
+
+### 3. **Advanced Usage**
+- Custom configurations
+- Error handling
+- Performance optimization
+- Security best practices
+
+### 4. **API Reference**
+- Complete method documentation
+- Parameter descriptions
+- Return value specifications
+- Code examples
+
+## 🚀 Deployment
+
+### Build for Production
+
+```bash
 npm run build
 ```
 
-The built files will be in the `dist/` directory, ready for deployment to any static hosting service.
+### Deployment Options
 
-## Contributing
+#### **Netlify** (Recommended)
+```bash
+# Build command: npm run build
+# Publish directory: dist
+```
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+#### **Vercel**
+```bash
+# Framework preset: Vite
+# Build command: npm run build
+# Output directory: dist
+```
 
-## License
+#### **GitHub Pages**
+```bash
+npm run build
+# Deploy dist/ folder to gh-pages branch
+```
 
-This project is private and proprietary to the GasFlow SDK team.
+## 🤝 Contributing
+
+### Adding New Documentation
+
+1. Create new page component in `src/pages/`
+2. Add route in `src/App.tsx`
+3. Update navigation in `src/components/Navigation.tsx`
+4. Follow existing documentation patterns
+
+### Code Style Guidelines
+
+- Use TypeScript for all components
+- Follow existing component structure
+- Add proper JSDoc comments
+- Ensure responsive design
+- Test on multiple devices
+
+## 🔗 Related Projects
+
+- **[Main Project](../README.md)**: Overall project documentation
+- **[SDK Package](../sdk-npm/)**: Core GasFlow SDK
+- **[Demo Hub](../gasflow-demo-hub/)**: Live demo application
+
+## 📄 License
+
+MIT License - see the [LICENSE](../LICENSE) file for details.
+
+---
+
+**Part of the Circle Developer Bounty 2024 submission** 🏆
+
+*Making multichain USDC integration accessible to all developers*

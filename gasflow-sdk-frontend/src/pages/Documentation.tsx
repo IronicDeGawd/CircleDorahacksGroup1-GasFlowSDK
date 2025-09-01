@@ -65,87 +65,95 @@ const Documentation = () => {
 
   const apiFunctions: APIFunction[] = [
     {
-      name: "new GasFlowSDK()",
-      icon: <Settings className="h-4 w-4" />,
-      category: "Core",
-      description: "Initialize the GasFlow SDK with Circle CCTP V2 integration",
+      name: "🚀 Quick Start Guide",
+      icon: <Zap className="h-4 w-4" />,
+      category: "Getting Started",
+      description: "Complete setup guide for GasFlow SDK integration",
       content: (
         <div className="space-y-4">
           <div>
-            <h4 className="font-semibold mb-2">Description</h4>
+            <h4 className="font-semibold mb-2">What GasFlow SDK Offers</h4>
             <p className="text-sm text-muted-foreground mb-4">
-              Initialize a new GasFlow SDK instance with Circle API integration
-              and cross-chain capabilities. Works in both mock mode
-              (development) and production mode (real CCTP).
+              GasFlow SDK is the ultimate toolkit for cross-chain gas management, enabling developers to build dApps where users can pay gas fees with USDC from any supported chain.
             </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                <h5 className="font-medium text-blue-800 dark:text-blue-200 mb-1">🌉 CCTP (Primary Feature)</h5>
+                <p className="text-xs text-blue-700 dark:text-blue-300">Cross-chain USDC transfers using Circle's native burn-and-mint protocol</p>
+              </div>
+              <div className="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg">
+                <h5 className="font-medium text-amber-800 dark:text-amber-200 mb-1">💳 Paymaster (Under Construction)</h5>
+                <p className="text-xs text-amber-700 dark:text-amber-300">Pay gas fees with USDC using Circle Smart Accounts and ERC-4337</p>
+              </div>
+            </div>
           </div>
           <div>
-            <h4 className="font-semibold mb-2">Basic Setup (Mock Mode)</h4>
+            <h4 className="font-semibold mb-2">1. Installation</h4>
+            <pre className="text-xs bg-muted p-3 rounded font-mono overflow-x-auto">
+              {`npm install @gasflow/sdk ethers
+# or
+yarn add @gasflow/sdk ethers`}
+            </pre>
+          </div>
+          <div>
+            <h4 className="font-semibold mb-2">2. Basic Setup (Development)</h4>
             <pre className="text-xs bg-muted p-3 rounded font-mono overflow-x-auto">
               {`import { GasFlowSDK } from '@gasflow/sdk';
 
-// Mock mode for development (no API key needed)
+// Development mode - no API key required
 const gasFlow = new GasFlowSDK({
   apiKey: 'demo_mode',
-  supportedChains: [11155111, 421614, 84532, 43113, 80002],
-  useProductionCCTP: false,  // Uses simulated CCTP
+  supportedChains: [11155111, 421614, 84532, 43113, 80002], // Testnets
+  executionMode: 'traditional' // Start with MetaMask integration
 });`}
             </pre>
           </div>
           <div>
-            <h4 className="font-semibold mb-2">Production Setup (Real CCTP)</h4>
+            <h4 className="font-semibold mb-2">3. Production Setup (Real CCTP)</h4>
             <pre className="text-xs bg-muted p-3 rounded font-mono overflow-x-auto">
-              {`// Production mode with real Circle contracts
+              {`// Production mode with Circle API
 const gasFlow = new GasFlowSDK({
-  apiKey: process.env.CIRCLE_API_KEY,
+  apiKey: process.env.VITE_CIRCLE_API_KEY, // Get from developers.circle.com
   supportedChains: [11155111, 421614, 84532, 43113, 80002],
-  useProductionCCTP: true,   // Uses real Circle CCTP contracts
-  signers: signerMap         // Optional: Wallet signers for each chain
+  executionMode: 'auto', // Supports both traditional and paymaster
+  alchemyApiKey: process.env.ALCHEMY_API_KEY // Required for Paymaster
 });`}
             </pre>
           </div>
           <div>
-            <h4 className="font-semibold mb-2">Environment Configuration</h4>
+            <h4 className="font-semibold mb-2">4. Environment Variables</h4>
             <pre className="text-xs bg-muted p-3 rounded font-mono overflow-x-auto">
-              {`# .env file setup
-VITE_CIRCLE_API_KEY=your_circle_api_key_from_developers.circle.com
-CIRCLE_ENVIRONMENT=testnet
-GASFLOW_SUPPORTED_CHAINS=11155111,421614,84532,43113,80002
+              {`# .env file
+VITE_CIRCLE_API_KEY=your_api_key_from_developers.circle.com
+ALCHEMY_API_KEY=your_alchemy_key_for_paymaster_features
 
-# Optional: RPC endpoints (SDK has defaults)
-RPC_URL_ETHEREUM_SEPOLIA=https://sepolia.infura.io/v3/YOUR_KEY
-RPC_URL_ARBITRUM_SEPOLIA=https://sepolia-rollup.arbitrum.io/rpc
-# Required: Alchemy API Key for Paymaster functionality
-ALCHEMY_API_KEY=your_alchemy_api_key_here`}
+# Supported testnet chains
+GASFLOW_SUPPORTED_CHAINS=11155111,421614,84532,43113,80002`}
             </pre>
           </div>
           <div>
-            <h4 className="font-semibold mb-2">Parameters</h4>
+            <h4 className="font-semibold mb-2">5. What This Simplifies for Developers</h4>
             <ul className="text-sm space-y-2">
-              <li>
-                <code className="text-xs bg-muted px-1 rounded">apiKey</code> -
-                Circle API key from developers.circle.com (or 'demo_mode' for
-                development)
-              </li>
-              <li>
-                <code className="text-xs bg-muted px-1 rounded">
-                  supportedChains
-                </code>{" "}
-                - Array of chain IDs: [11155111, 421614, 84532, 43113, 80002]
-                for testnets
-              </li>
-              <li>
-                <code className="text-xs bg-muted px-1 rounded">
-                  useProductionCCTP
-                </code>{" "}
-                - true for real Circle contracts, false for mock/demo mode
-              </li>
-              <li>
-                <code className="text-xs bg-muted px-1 rounded">signers</code> -
-                Optional Map of wallet signers for each chain (for server-side
-                usage)
-              </li>
+              <li>✅ <strong>Cross-chain complexity:</strong> One SDK call handles USDC bridging across 5+ chains</li>
+              <li>✅ <strong>Gas payment UX:</strong> Users pay gas with USDC instead of managing native tokens</li>
+              <li>✅ <strong>Route optimization:</strong> Automatic selection of cheapest execution path</li>
+              <li>✅ <strong>Circle integration:</strong> Production-ready CCTP V2 and Paymaster contracts</li>
+              <li>✅ <strong>Real-time tracking:</strong> Built-in transaction and balance monitoring</li>
             </ul>
+          </div>
+          <div>
+            <h4 className="font-semibold mb-2">Next Steps</h4>
+            <div className="grid grid-cols-1 gap-2">
+              <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded text-sm">
+                <span className="font-medium">→ Start with CCTP:</span> Use <code className="text-xs bg-muted px-1 rounded">gasFlow.execute()</code> for cross-chain transfers
+              </div>
+              <div className="p-2 bg-blue-50 dark:bg-blue-900/20 rounded text-sm">
+                <span className="font-medium">→ Add Paymaster:</span> Enable USDC gas payments (currently under construction)
+              </div>
+              <div className="p-2 bg-purple-50 dark:bg-purple-900/20 rounded text-sm">
+                <span className="font-medium">→ Monitor balances:</span> Use <code className="text-xs bg-muted px-1 rounded">getUnifiedBalance()</code> for real-time updates
+              </div>
+            </div>
           </div>
         </div>
       ),
@@ -790,7 +798,7 @@ BUNDLER_URL_BASE_SEPOLIA=https://base-sepolia.g.alchemy.com/v2/YOUR_ALCHEMY_KEY`
         </div>
 
         <ScrollArea className="flex-1 overflow-y-auto">
-          <div className="p-4 space-y-6 pb-8">
+          <div className="p-4 space-y-6 pb-20">
             {Object.entries(groupedFunctions).map(([category, functions]) => (
               <div key={category}>
                 <h3 className="font-semibold text-sm text-muted-foreground mb-3 uppercase tracking-wide">
@@ -801,16 +809,16 @@ BUNDLER_URL_BASE_SEPOLIA=https://base-sepolia.g.alchemy.com/v2/YOUR_ALCHEMY_KEY`
                     <Button
                       key={index}
                       variant="ghost"
-                      className="w-full justify-start h-auto p-3 hover:bg-primary/5 text-left"
+                      className="w-full justify-start h-auto p-3 hover:bg-primary/5 text-left overflow-hidden whitespace-normal"
                       onClick={() => openWindow(func)}
                     >
-                      <div className="flex items-start space-x-3 w-full">
+                      <div className="flex items-start space-x-3 w-full min-w-0">
                         <div className="flex-shrink-0 mt-0.5">{func.icon}</div>
-                        <div className="flex-1 min-w-0">
-                          <div className="font-mono text-sm font-medium truncate">
+                        <div className="flex-1 min-w-0 overflow-hidden">
+                          <div className="font-mono text-xs font-medium break-words overflow-wrap-anywhere leading-tight">
                             {func.name}
                           </div>
-                          <div className="text-xs text-muted-foreground mt-1 line-clamp-2">
+                          <div className="text-xs text-muted-foreground mt-1 break-words overflow-wrap-anywhere leading-relaxed">
                             {func.description}
                           </div>
                         </div>

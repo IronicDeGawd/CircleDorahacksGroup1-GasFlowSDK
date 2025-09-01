@@ -29,8 +29,8 @@ const MAINNET_MESSAGE_TRANSMITTER = '0x81D40F21F12A8F0E3252Bccb954D722d4c464B64'
 const MAINNET_TOKEN_MINTER = '0xfd78EE919681417d192449715b2594ab58f5D002';
 
 // Official Circle CCTP V2 Testnet Addresses (consistent across all testnets)
-const TESTNET_TOKEN_MESSENGER = '0x8FE6B999Dc680CcFDD5Bf7EB0974218be2542DAA';
-const TESTNET_MESSAGE_TRANSMITTER = '0xE737e5cEBEEBa77EFE34D4aa090756590b1CE275';
+const TESTNET_TOKEN_MESSENGER = '0x8fe6b999dc680ccfdd5bf7eb0974218be2542daa';
+const TESTNET_MESSAGE_TRANSMITTER = '0xe737e5cebeeba77efe34d4aa090756590b1ce275';
 
 // Legacy working testnet addresses (for compatibility reference)
 // These were working in previous implementation but may be older CCTP version

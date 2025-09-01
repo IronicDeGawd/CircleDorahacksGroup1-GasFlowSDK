@@ -9,8 +9,18 @@ export type {
   GasFlowResult,
   TransactionStatus,
   TransactionUpdate,
-  EventListener
+  EventListener,
+  CCTPTransferMode
 } from '@gasflow/sdk';
+
+// Extended transaction type for demo UI
+export interface DemoGasFlowTransaction extends Omit<GasFlowTransaction, 'to' | 'value'> {
+  to: string;
+  sendAmountETH?: string; // Amount to send to recipient (user input)
+  value?: bigint; // Transaction value in wei (calculated from sendAmountETH)
+  gasPaymentETH?: string; // ETH equivalent amount for gas payment (user input)
+  gasPaymentUSDC?: bigint; // Calculated USDC amount needed for gas
+}
 
 // Local chain names mapping for display
 export const CHAIN_NAMES: Record<number, string> = {
