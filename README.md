@@ -268,6 +268,6 @@ MIT License - see LICENSE file for details.
 
 ---
 
-**Built for Circle Developer Bounty 2024** 🏆
+**Built for Circle Developer Bounty 2025** 🏆
 
 *Simplifying multichain USDC payments for the next generation of dApps*
